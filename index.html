@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/x-icon" href="img/logo.png">
+    <title>Sistema de Exercícios</title>
+    <style>
+        body {
+            display: flex;
+            margin: 0;
+            font-family: Arial, sans-serif;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        #menu {
+            width: 250px;
+            background-color: #333;
+            color: white;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            transition: 0.3s;
+            position: fixed;
+            height: 100%;
+            z-index: 30;
+            left: 0;
+            overflow-y: auto;
+            box-sizing: border-box;
+        }
+
+        #menu.retraido {
+            left: -290px;
+        }
+
+        #btn-fechar {
+            background: #444;
+            color: white;
+            border: none;
+            padding: 8px;
+            cursor: pointer;
+            border-radius: 4px;
+            align-self: flex-end;
+            margin-bottom: 10px;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            padding: 10px;
+            background-color: #444;
+            border-radius: 4px;
+            text-align: center;
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        nav a:hover {
+            background-color: #555;
+        }
+
+        #btn-toggle {
+            position: fixed;
+            left: 10px;
+            top: 10px;
+            z-index: 20;
+            background: #333;
+            color: white;
+            border: none;
+            padding: 10px;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+
+        main {
+            flex-grow: 1;
+            position: relative;
+            background-color: #f4f4f4;
+            margin-left: 0;
+            width: 100%;
+        }
+
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            display: block;
+        }
+
+        #welcome {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            color: #666;
+            width: 100%;
+            z-index: 5;
+        }
+
+        .img {
+            width: 200px;
+            border-radius: 30px;
+        }
+
+        .imgmenu {
+            align-self: flex-start;
+            width: 60px;
+            border-radius: 5px;
+        }
+
+        ul {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+        }
+    </style>
+</head>
+
+<body ontouchstart="handleTouchStart(event)" ontouchmove="handleTouchMove(event)">
+
+    <button id="btn-toggle" onclick="abrirMenu()">☰</button>
+
+    <div id="menu" class="retraido">
+        <img src="img/logo.png" class="imgmenu">
+        <button id="btn-fechar" onclick="fecharMenu()">✖ Fechar</button>
+        <h2 style="margin: 0;">Menu</h2>
+        <nav>
+            <ul>
+                <li>
+                    <a href="index.html" target="conteudo" onclick="home()">Home</a>
+                </li>
+                <li>
+                    <a href="lib/academia/views/index.html">ACADEMIA</a>
+                </li>
+                <li>
+                    <a href="lib/banco/views/index.html">BANCO</a>
+                </li>
+                <li>
+                    <a href="lib/biblioteca/views/index.html">BIBLIOTECA</a>
+                </li>
+                <li>
+                    <a href="lib/escola/views/index.html">ESCOLA</a>
+                </li>
+                <li>
+                    <a href="lib/empresa/views/index.html">EMPRESA</a>
+                </li>
+                <li>
+                    <a href="lib/e-commerce/views/index.html">E-COMMERCE</a>
+                </li>
+                <li>
+                    <a href="lib/saude/index.html">SAÚDE OPERACIONAL</a>
+                </li>
+                <li>
+                    <a href="lib/veiculos/views/index.html">VEICULOS</a>
+                </li>
+                <li>
+                    <a href="lib/loja/views/index.html">LOJA</a>
+                </li>
+                <li>
+                    <a href="lib/produto/views/home/index.html">PRODUTO</a>
+                </li>
+                <li>
+                    <a href="lib/imc/views/home/index.html">IMC</a>
+                </li>
+
+            </ul>
+        </nav>
+    </div>
+
+    <main id="main-content" onclick="fecharMenu()">
+        <div id="welcome">
+            <h1>Bem-vindo aos Projetos</h1>
+            <p>Selecione um item no menu lateral para começar.</p>
+            <img src="img/logo.png" class="img">
+        </div>
+        <iframe name="conteudo" id="frame"></iframe>
+    </main>
+
+    <script>
+        const menu = document.getElementById('menu');
+        const welcome = document.getElementById('welcome');
+        let xDown = null;
+
+        function abrirMenu() {
+            menu.classList.remove('retraido');
+        }
+
+        function fecharMenu() {
+            menu.classList.add('retraido');
+        }
+
+        function navegar() {
+            welcome.style.display = 'none';
+            fecharMenu();
+        }
+
+        function home() {
+            welcome.style.display = 'block';
+            fecharMenu();
+        }
+
+        function handleTouchStart(evt) {
+            xDown = evt.touches[0].clientX;
+        }
+
+        function handleTouchMove(evt) {
+            if (!xDown) return;
+            let xUp = evt.touches[0].clientX;
+            let xDiff = xDown - xUp;
+
+            if (xDiff < -50) {
+                abrirMenu();
+            } else if (xDiff > 50) {
+                fecharMenu();
+            }
+            xDown = null;
+        }
+    </script>
+</body>
+
+</html>

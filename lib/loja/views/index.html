@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Loja</title>
+    <link rel="stylesheet" href="css/estilo.css">
+</head>
+
+<body>
+
+    <div class="container">
+        <div class="voltar"><a href="../../../">Voltar</a></div>
+        <form id="formLoja">
+            <h2>E-Shop Cadastro de Produtos</h2>
+            <div class="form-group">
+                <label for="tipoProd">Categoria:</label>
+                <select id="tipoProd" onchange="alternarCampos()">
+                    <option value="">---selecione---</option>
+                    <option value="eletronico">Eletrônico</option>
+                    <option value="vestuario">Vestuário</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="descricao">Descrição:</label>
+                <input type="text" id="descricao">
+            </div>
+            <div class="form-group">
+                <label for="preco">Preço (R$):</label>
+                <input type="number" id="preco" step="0.01">
+            </div>
+
+            <div id="camposEletronico">
+                <div class="form-group">
+                    <label for="garantia">Meses de Garantia:</label>
+                    <input type="number" id="garantia">
+                </div>
+            </div>
+
+            <div id="camposVestuario" class="hidden">
+                <div class="form-group">
+                    <label for="tamanho">Tamanho:</label>
+                    <input type="text" id="tamanho" placeholder="Ex: G, M, 42">
+                </div>
+            </div>
+
+            <button type="submit">Calcular</button>
+
+        </form>
+
+        <div id="resultado" class="resultado hidden"></div>
+    </div>
+
+    <script type="module" src="../controllers/script.js"></script>
+
+</body>
+
+</html>

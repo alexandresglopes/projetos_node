@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E-commerce</title>
+    <link rel="stylesheet" href="css/estilo.css">
+</head>
+
+<body>
+
+    <div class="container">
+        <div class="voltar"><a href="../../../">Voltar</a></div>
+        <form id="fromEcommerce">
+
+            <h2>Gerenciamento de Usuários - Shop</h2>
+            <div class="form-group">
+                <label for="tipoUser">Tipo de Conta:</label>
+                <select id="tipoUser" onchange="alternarCampos()">
+                    <option value="">---selecione---</option>
+                    <option value="cliente">Cliente</option>
+                    <option value="admin">Administrador</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="nome">Nome:</label>
+                <input type="text" id="nome">
+            </div>
+            <div class="form-group">
+                <label for="email">E-mail corporativo/pessoal:</label>
+                <input type="email" id="email">
+            </div>
+
+            <div id="camposCliente">
+                <div class="form-group">
+                    <label for="endereco">Endereço de Entrega:</label>
+                    <input type="text" id="endereco">
+                </div>
+                <div class="form-group">
+                    <label for="novoEndereco">Deseja editar/alterar o endereço atual?</label>
+                    <input type="text" id="novoEndereco" placeholder="Digite se quiser testar o método editarDados()">
+                </div>
+            </div>
+
+            <div id="camposAdmin" class="hidden">
+                <div class="form-group">
+                    <label for="nivelAcesso">Nível de Acesso (Número):</label>
+                    <input type="number" id="nivelAcesso" placeholder="Ex: 1, 2, 3">
+                </div>
+                <div class="form-group">
+                    <label for="novoNivel">Alterar Nível de Acesso para:</label>
+                    <input type="number" id="novoNivel" placeholder="Altera via método de classe">
+                </div>
+            </div>
+
+            <button type="submit">Processar Credenciais</button>
+
+        </form>
+
+
+        <div id="resultado" class="resultado hidden"></div>
+    </div>
+
+    <script type="module" src="../controllers/script.js"></script>
+</body>
+
+</html>

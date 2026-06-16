@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Biblioteca</title>
+    <link rel="stylesheet" href="css/estilo.css">
+</head>
+
+<body>
+
+    <div class="container">
+        <div class="voltar"><a href="../../../">Voltar</a></div>
+        <form id="fromBiblioteca">
+
+            <h2>Gerenciador de Biblioteca</h2>
+            <div class="form-group">
+                <label for="tipoPub">Tipo de Publicação:</label>
+                <select id="tipoPub" onchange="alternarCampos()">
+                    <option value="">---selecione---</option>
+                    <option value="livro">Livro</option>
+                    <option value="revista">Revista</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="titulo">Título:</label>
+                <input type="text" id="titulo">
+            </div>
+            <div class="form-group">
+                <label for="autor">Autor:</label>
+                <input type="text" id="autor">
+            </div>
+
+            <div id="camposLivro">
+                <div class="form-group">
+                    <label for="isbn">ISBN:</label>
+                    <input type="text" id="isbn">
+                </div>
+            </div>
+
+            <div id="camposRevista" class="hidden">
+                <div class="form-group">
+                    <label for="edicao">Número da Edição:</label>
+                    <input type="number" id="edicao">
+                </div>
+            </div>
+
+            <button type="submit">Registrar</button>
+        </form>
+        <div id="resultado" class="resultado hidden"></div>
+    </div>
+
+    <script type="module" src="../controllers/script.js"></script>
+</body>
+
+</html>

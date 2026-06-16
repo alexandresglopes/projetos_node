@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Veículos</title>
+    <link rel="stylesheet" href="css/estilo.css">
+</head>
+
+<body>
+
+    <div class="container">
+        <div class="voltar"><a href="../../../">Voltar</a></div>
+        <form id="formVeiculo">
+
+            <h2>Cadastro de Veículos</h2>
+            <div class="form-group">
+                <label for="tipoVeiculo">Tipo de Veículo:</label>
+                <select id="tipoVeiculo" onchange="alternarCampos()">
+                    <option value="">---selecione---</option>
+                    <option value="carro">Carro</option>
+                    <option value="moto">Moto</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="marca">Marca:</label>
+                <input type="text" id="marca">
+            </div>
+            <div class="form-group">
+                <label for="modelo">Modelo Inicial:</label>
+                <input type="text" id="modelo">
+            </div>
+            <div class="form-group">
+                <label for="ano">Ano:</label>
+                <input type="number" id="ano">
+            </div>
+
+            <div id="camposCarro">
+                <div class="form-group">
+                    <label for="portas">Número de Portas:</label>
+                    <input type="number" id="portas">
+                </div>
+            </div>
+
+            <div id="camposMoto" class="hidden">
+                <div class="form-group">
+                    <label for="cilindradas">Cilindradas:</label>
+                    <input type="number" id="cilindradas">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="novoModelo">Atualizar/Inserir Novo Nome de Modelo (Polimorfismo):</label>
+                <input type="text" id="novoModelo" placeholder="Opcional">
+            </div>
+
+            <button type="submit">Executar</button>
+
+        </form>
+
+        <div id="resultado" class="resultado hidden"></div>
+    </div>
+
+    <script type="module" src="../controllers/script.js"></script>
+</body>
+
+</html>

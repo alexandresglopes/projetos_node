@@ -1,0 +1,90 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+body {
+    background: linear-gradient(135deg, #1e3c72, #2a5298);
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.container {
+    background: white;
+    padding: 30px;
+    width: 400px;
+    border-radius: 15px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+}
+
+h1 {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #1e3c72;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+}
+
+label {
+    margin-top: 10px;
+    font-weight: bold;
+}
+
+input {
+    padding: 10px;
+    margin-top: 5px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 16px;
+}
+
+button {
+    margin-top: 20px;
+    padding: 12px;
+    background: #1e3c72;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
+}
+
+button:hover {
+    background: #2a5298;
+}
+
+.voltar {
+     text-align: right;
+ }
+
+ .voltar a {
+     display: inline-block;
+     padding: 5px 10px;
+     border: 1px solid #3498db;
+     color: #3498db;
+     border-radius: 4px;
+     cursor: pointer;
+     font-size: 16px;
+     width: 80px;
+     text-align: center;
+     transition: 0.5s;
+     text-decoration: none;
+ }
+
+ .voltar a:hover {
+     transform: translateY(-5px);
+ }
+
+#resultado {
+    background: #f2f2f2;
+    font-weight: bold;
+    color: green;
+}

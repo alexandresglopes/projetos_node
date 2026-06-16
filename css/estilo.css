@@ -1,0 +1,92 @@
+.divPrincipal {
+    max-width: 600px;
+    margin: 50px auto;
+    font-family: sans-serif;
+    background-color: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    border: 1px solid #e0e0e0;
+}
+
+.inputnome {
+    width: 100%;
+    padding: 12px;
+    border: 2px solid #f0f0f0;
+    border-radius: 8px;
+    box-sizing: border-box;
+    outline: none;
+    transition: border-color 0.3s;
+    background-color: #f9f9f9;
+}
+
+.select {
+    width: 100%;
+    padding: 12px;
+    border: 2px solid #f0f0f0;
+    border-radius: 8px;
+    box-sizing: border-box;
+    outline: none;
+    transition: border-color 0.3s;
+    background-color: #f9f9f9;
+}
+
+.inputnotas {
+    padding: 10px;
+    text-align: center;
+    color: #777;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.inputvalor {
+    width: 100%;
+    padding: 12px;
+    border: 2px solid #f0f0f0;
+    border-radius: 8px;
+    text-align: center;
+    box-sizing: border-box;
+}
+
+.coluna {
+    align-items: center;
+    text-align: center;
+    justify-content: center;
+}
+
+.botao {
+    background-color: #4a69bd;
+    color: white;
+    border: none;
+    padding: 12px 30px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 14px;
+    transition: background 0.3s;
+    box-shadow: 0 4px 6px rgba(74, 105, 189, 0.2);
+}
+
+.botaolimpar {
+    background-color: #e84011;
+    color: white;
+    border: none;
+    padding: 12px 30px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 14px;
+    transition: background 0.3s;
+    box-shadow: 0 4px 6px rgba(74, 105, 189, 0.2);
+}
+
+.divresult {
+    max-width: 600px;
+    margin: 20px auto;
+    padding: 20px;
+    border-radius: 10px;
+    background-color: #f8f9fa;
+    border-left: 5px solid green;
+    font-family: sans-serif;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}

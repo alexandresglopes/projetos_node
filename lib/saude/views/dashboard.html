@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Saúde Ocupacional</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="icon" type="image/png" href="../img/logo.png" />
+    <link rel="stylesheet" href="../styles/style.css">
+</head>
+
+<body>
+
+    <div class="d-flex" id="wrapper">
+        <div class="bg-dark text-white p-3 border-end border-secondary flex-shrink-0" id="sidebar-wrapper">
+            <div class="sidebar-heading text-center py-4 fs-4 fw-bold border-bottom border-secondary mb-3">
+                <i class="fa-solid fa-heart-pulse text-danger me-2"></i>SSO Clínico
+            </div>
+            <div class="list-group list-group-flush gap-1">
+                <a href="#"
+                    class="list-group-item list-group-item-action bg-transparent text-white active fw-bold border-0 py-2 rounded">
+                    <i class="fa-solid fa-chart-pie me-3"></i>Dashboard
+                </a>
+            </div>
+            <div class="sidebar-footer">
+                <a href="../index.html"
+                    class="list-group-item list-group-item-action bg-transparent text-light border-0 py-3 rounded text-white-hover">
+                    <i class="fa-solid fa-right-from-bracket me-3 text-danger fs-5"></i><span class="fw-semibold">Sair
+                        do Sistema</span>
+                </a>
+            </div>
+        </div>
+
+        <div id="page-content-wrapper" class="flex-grow-1">
+            <nav class="navbar navbar-expand-lg navbar-light bg-white py-3 px-4 shadow-sm border-bottom">
+                <div class="container-fluid p-0 gap-3">
+                    <button class="btn btn-outline-secondary" id="menu-toggle">
+                        <i class="fa-solid fa-bars"></i>
+                    </button>
+
+                    <span class="navbar-brand fw-bold text-secondary mb-0 h1 fs-5 me-auto d-none d-sm-block">Módulo de
+                        Gestão Avançada</span>
+
+                    <button class="btn btn-primary d-flex align-items-center gap-2 shadow-sm" data-bs-toggle="modal"
+                        data-bs-target="#modalColaborador" onclick="configurarModalCadastro()">
+                        <i class="fa-solid fa-user-plus"></i> <span class="d-none d-md-inline">Novo Colaborador</span>
+                    </button>
+                </div>
+            </nav>
+
+            <div class="container-fluid px-4 py-4">
+                <div class="mb-4">
+                    <h1 class="h3 fw-bold text-dark m-0">Olá, Administrador</h1>
+                    <p class="text-muted m-0 small">Acompanhe exames ocupacionais, validades e índices de absenteísmo.
+                    </p>
+                </div>
+
+                <div class="row g-3 mb-4">
+                    <div class="col-md-4">
+                        <div
+                            class="card card-custom border-0 border-start border-primary border-5 shadow-sm p-3 bg-white">
+                            <div class="d-flex align-items-center justify-content-between">
+                                <div>
+                                    <div class="text-muted text-uppercase small fw-bold mb-1">Total Colaboradores</div>
+                                    <div class="display-6 fw-bold text-dark" id="card-total-colaboradores">0</div>
+                                </div>
+                                <div class="fs-1 text-primary opacity-25"><i class="fa-solid fa-users"></i></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div
+                            class="card card-custom border-0 border-start border-danger border-5 shadow-sm p-3 bg-white">
+                            <div class="d-flex align-items-center justify-content-between">
+                                <div>
+                                    <div class="text-muted text-uppercase small fw-bold mb-1">Exames Vencidos</div>
+                                    <div class="display-6 fw-bold text-dark" id="card-exames-vencidos">0</div>
+                                </div>
+                                <div class="fs-1 text-danger opacity-25"><i class="fa-solid fa-calendar-times"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div
+                            class="card card-custom border-0 border-start border-warning border-5 shadow-sm p-3 bg-white">
+                            <div class="d-flex align-items-center justify-content-between">
+                                <div>
+                                    <div class="text-muted text-uppercase small fw-bold mb-1">Colaboradores Afastados
+                                    </div>
+                                    <div class="display-6 fw-bold text-dark" id="card-total-afastados">0</div>
+                                </div>
+                                <div class="fs-1 text-warning opacity-25"><i class="fa-solid fa-user-injured"></i></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card shadow-sm border-0 bg-white p-4">
+                    <div
+                        class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-2 mb-4">
+                        <h2 class="h5 fw-bold text-secondary m-0"><i
+                                class="fa-solid fa-folder-open me-2 text-primary"></i>Prontuário Resumido e Situação de
+                            Prazos</h2>
+                        <button class="btn btn-outline-warning btn-sm fw-bold d-flex align-items-center gap-2 shadow-sm"
+                            data-bs-toggle="modal" data-bs-target="#modalAfastamento">
+                            <i class="fa-solid fa-stethoscope"></i> Lançar Afastamento CID
+                        </button>
+                    </div>
+                    <div class="table-responsive">
+                        <table id="tabela-relatorio" class="table table-hover align-middle w-100 border-top">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Colaborador</th>
+                                    <th>Setor / Cargo</th>
+                                    <th>Último Exame</th>
+                                    <th>Situação</th>
+                                    <th>Dias Afastados</th>
+                                    <th class="text-end">Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="modalColaborador" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow-lg">
+                <div class="modal-header bg-dark text-white border-0 py-3">
+                    <h5 class="modal-title fw-bold" id="modalColaboradorTitulo">Cadastrar Colaborador</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <form id="form-colaborador">
+                    <div class="modal-body p-4">
+                        <input type="hidden" id="colaborador-id">
+                        <div class="mb-3">
+                            <label class="form-label fw-bold small text-muted">Nome Completo</label>
+                            <input type="text" id="nome" class="form-control" required>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold small text-muted">Setor</label>
+                                <input type="text" id="setor" class="form-control" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold small text-muted">Cargo</label>
+                                <input type="text" id="cargo" class="form-control" required>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold small text-muted">Data do Exame</label>
+                                <input type="date" id="exame-data" class="form-control" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold small text-muted">Resultado</label>
+                                <select id="exame-resultado" class="form-select" required>
+                                    <option value="Apto">Apto</option>
+                                    <option value="Inapto">Inapto</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer bg-light border-0">
+                        <button type="button" class="btn btn-secondary px-4" data-bs-dismiss="modal">Fechar</button>
+                        <button type="submit" class="btn btn-primary px-4">Confirmar Dados</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="modalAfastamento" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow-lg">
+                <div class="modal-header bg-warning text-dark border-0 py-3">
+                    <h5 class="modal-title fw-bold">Afastamento Clínico</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <form id="form-afastamento">
+                    <div class="modal-body p-4">
+                        <div class="mb-3">
+                            <label class="form-label fw-bold small text-muted">Selecionar Colaborador</label>
+                            <select id="afastamento-colab-id" class="form-select" required></select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold small text-muted">Código CID</label>
+                            <input type="text" id="afastamento-cid" class="form-control" required
+                                placeholder="Ex: M54.5">
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold small text-muted">Início</label>
+                                <input type="date" id="afastamento-inicio" class="form-control" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold small text-muted">Término</label>
+                                <input type="date" id="afastamento-fim" class="form-control" required>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer bg-light border-0">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-warning fw-bold">Salvar Licença</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="modalSucesso" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-sm modal-dialog-centered">
+            <div class="modal-content border-0 shadow-lg text-center p-3">
+                <div class="modal-body">
+                    <div class="text-success mb-3" style="font-size: 3rem;">
+                        <i class="fa-solid fa-circle-check"></i>
+                    </div>
+                    <h5 class="fw-bold mb-1 text-dark" id="sucesso-titulo">Sucesso!</h5>
+                    <p class="text-muted small mb-0" id="sucesso-mensagem">Operação realizada.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap5.min.js"></script>
+
+    <script>
+        document.getElementById("menu-toggle").addEventListener("click", function () {
+            document.getElementById("wrapper").classList.toggle("toggled");
+        });
+    </script>
+
+    <script type="module" src="../controllers/script_dashboard.js"></script>
+</body>
+
+</html>

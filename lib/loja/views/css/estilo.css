@@ -1,0 +1,86 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 20px;
+    background-color: #f4f4f9;
+}
+
+.container {
+    max-width: 600px;
+    margin: auto;
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+h2 {
+    color: #2c3e50;
+}
+
+.form-group {
+    margin-bottom: 15px;
+    display: flex;
+    flex-direction: column;
+}
+
+label {
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+input,
+select {
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+button {
+    padding: 10px;
+    background-color: #e74c3c;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    width: 100%;
+    transition: 0.5s;
+}
+
+button:hover {
+    background-color: #c0392b;
+    transform: translateY(-5px);
+}
+
+.voltar {
+    text-align: right;
+}
+
+.voltar a {
+    display: inline-block;
+    padding: 5px 10px;
+    border: 1px solid #3498db;
+    color: #3498db;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    width: 80px;
+    text-align: center;
+    transition: 0.5s;
+    text-decoration: none;
+}
+
+.voltar a:hover {
+    transform: translateY(-5px);
+}
+
+.resultado {
+    margin-top: 20px;
+    padding: 15px;
+    background-color: #fdebd0;
+    border-left: 5px solid #e74c3c;
+    white-space: pre-line;
+}
+
+.hidden {
+    display: none;
+}

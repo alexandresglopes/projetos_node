@@ -1,0 +1,111 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 20px;
+    background-color: #f4f4f9;
+    color: #333;
+}
+
+.container {
+    max-width: 600px;
+    margin: auto;
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+h2,
+h3 {
+    color: #2c3e50;
+}
+
+.form-group {
+    margin-bottom: 15px;
+    display: flex;
+    flex-direction: column;
+}
+
+label {
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+input,
+select {
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+button {
+    padding: 10px;
+    background-color: #3498db;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    width: 100%;
+    transition: 0.5s;
+
+}
+
+button:hover {
+    background-color: #2980b9;
+    transform: translateY(-5px);
+}
+
+.voltar {
+    text-align: right;
+}
+
+.voltar a {
+    display: inline-block;
+    padding: 5px 10px;
+    border: 1px solid #3498db;
+    color: #3498db;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    width: 80px;
+    text-align: center;
+    transition: 0.5s;
+    text-decoration: none;
+}
+
+.voltar a:hover {
+    transform: translateY(-5px);
+}
+
+.resultado {
+    margin-top: 20px;
+    padding: 15px;
+    background-color: #e8f4f8;
+    border-left: 5px solid #3498db;
+    white-space: pre-line;
+}
+
+.hidden {
+    display: none;
+}
+
+.grid {
+    display: flex;
+    flex-flow: row wrap;
+    gap: 15px;
+    margin: 10px 0;
+    padding: 10px;
+    justify-content: center;
+    align-items: center;
+}
+
+.item {
+    transition: 0.5s;
+    flex: 1;
+    min-width: 250px;
+    max-width: 300px;
+}
+
+.item:hover {
+    transform: translateY(-5px);
+}

@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Academia Fit</title>
+    <link rel="stylesheet" href="css/estilo.css">
+</head>
+
+<body>
+
+    <div class="container">
+        <div class="voltar"><a href="../../../">Voltar</a></div>
+        <form id="fromAcademina">
+
+            <h2>Painel Academia</h2>
+            <div class="form-group">
+                <label for="tipoPerfil">Perfil:</label>
+                <select id="tipoPerfil" onchange="alternarCampos()">
+                    <option value="">---selecione---</option>
+                    <option value="aluno">Aluno da Academia</option>
+                    <option value="personal">Personal Trainer</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="nome">Nome:</label>
+                <input type="text" id="nome">
+            </div>
+            <div class="form-group">
+                <label for="peso">Peso Corporal (kg):</label>
+                <input type="number" id="peso" step="0.1">
+            </div>
+
+            <div id="camposAluno">
+                <div class="form-group">
+                    <label for="objetivo">Objetivo Físico:</label>
+                    <input type="text" id="objetivo" placeholder="Ex: Hipertrofia, Emagrecimento">
+                </div>
+                <div class="form-group">
+                    <label for="altura">Altura (metros) - Para cálculo IMC:</label>
+                    <input type="number" id="altura" step="0.01" placeholder="Ex: 1.75">
+                </div>
+            </div>
+
+            <div id="camposPersonal" class="hidden">
+                <div class="form-group">
+                    <label for="cref">Registro CREF:</label>
+                    <input type="text" id="cref">
+                </div>
+            </div>
+
+            <button type="submit">Registrar</button>
+
+        </form>
+
+
+        <div id="resultado" class="resultado hidden"></div>
+    </div>
+
+    <script type="module" src="../controllers/script.js"></script>
+</body>
+
+</html>
