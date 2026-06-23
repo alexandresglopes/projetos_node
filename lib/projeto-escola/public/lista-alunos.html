@@ -6,7 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sistema Escolar</title>
     <link rel="stylesheet" href="/css/style.css">
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.14.0/css/all.css" >
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.14.0/css/all.css">
+    <link rel="stylesheet" href="//cdn.datatables.net/1.10.25/css/jquery.dataTables.min.css">
 </head>
 
 <body>
@@ -30,7 +31,7 @@
             </header>
 
             <section class="tabela-container">
-                <table class="tabela-dados">
+                <table class="tabela-dados minhaTabela">
                     <thead>
                         <tr>
                             <th>Matricula</th>
@@ -43,7 +44,7 @@
                     </thead>
                     <tbody id="tabela-alunos-corpo">
                         <tr>
-                            <td colspan="5" style="text-align: center;">Carregando alunos...</td>
+                            <td colspan="6" style="text-align: center;">Carregando alunos...</td>
                         </tr>
                     </tbody>
                 </table>
@@ -51,7 +52,32 @@
         </main>
     </div>
 
+    <script src="//code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="//cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js"></script>
+
     <script>
+        
+        function inicializarDataTable() {
+            $('.minhaTabela').DataTable({
+                "destroy": true,
+                "pageLength": 500,
+                "order": [[0, "desc"]],
+                "language": {
+                    "searchPlaceholder": "Buscar...",
+                    "lengthMenu": "Mostrando _MENU_ registros por página",
+                    "sSearch": "",
+                    "zeroRecords": "Nada encontrado",
+                    "info": "Mostrando página _PAGE_ de _PAGES_",
+                    "infoEmpty": "Nenhum registro disponível",
+                    "infoFiltered": "(filtrado de _MAX_ registros no total)",
+                    "url": "//cdn.datatables.net/plug-ins/1.10.24/i18n/Portuguese-Brasil.json"
+                },
+                "columnDefs": [
+                    { "orderable": false, "targets": "no-sort" }
+                ]
+            });
+        }
+
         async function carregarAlunos() {
             try {
                 const resposta = await fetch('/api/alunos');
@@ -62,6 +88,8 @@
 
                 if (alunos.length === 0) {
                     corpoTabela.innerHTML = `<tr><td colspan="6" style="text-align: center;">Nenhum aluno cadastrado.</td></tr>`;
+                    
+                    inicializarDataTable();
                     return;
                 }
 
@@ -82,6 +110,8 @@
                     `;
                     corpoTabela.innerHTML += linha;
                 });
+                
+                inicializarDataTable();
 
             } catch (erro) {
                 console.error("Erro ao carregar alunos:", erro);
@@ -107,8 +137,10 @@
                 }
             }
         }
-
-        carregarAlunos();
+        
+        $(document).ready(function () {
+            carregarAlunos();
+        });
     </script>
 </body>
 

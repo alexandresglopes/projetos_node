@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sistema Escolar</title>
     <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.14.0/css/all.css">
 </head>
 
 <body>
@@ -23,9 +24,12 @@
             <input type="text" id="usuario" name="usuario" placeholder="admin" required>
 
             <label for="senha">Senha</label>
-            <input type="password" id="senha" name="senha" placeholder="*****" required>
+            <div class="campo-senha-container" style="position: relative; width: 100%;">
+                <input type="password" id="senha" name="senha" placeholder="*****" style="padding-right: 40px; margin-bottom: 18px;" required>
+                <i class="fas fa-eye" id="toggleSenha" style="position: absolute; right: 15px; top: 13px; cursor: pointer; color: #757575; font-size: 16px;"></i>
+            </div>
 
-            <button type="submit">Acessar Sistema</button>
+            <button type="submit" style="margin-top: 10px;">Acessar Sistema</button>
         </form>
     </main>
 
@@ -34,6 +38,21 @@
         if (urlParams.get('erro') === '1') {
             document.getElementById('erro-mensagem').style.display = 'block';
         }
+        
+        const senhaInput = document.getElementById('senha');
+        const toggleSenhaIcon = document.getElementById('toggleSenha');
+
+        toggleSenhaIcon.addEventListener('click', function () {
+            if (senhaInput.type === 'password') {
+                senhaInput.type = 'text';
+                toggleSenhaIcon.classList.remove('fa-eye');
+                toggleSenhaIcon.classList.add('fa-eye-slash');
+            } else {
+                senhaInput.type = 'password';
+                toggleSenhaIcon.classList.remove('fa-eye-slash');
+                toggleSenhaIcon.classList.add('fa-eye');
+            }
+        });
     </script>
 </body>
 

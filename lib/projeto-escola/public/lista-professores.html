@@ -1,12 +1,15 @@
 <!DOCTYPE html>
 <html lang="pt-br">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sistema Escolar</title>
     <link rel="stylesheet" href="/css/style.css">
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.14.0/css/all.css" >
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.14.0/css/all.css">
+    <link rel="stylesheet" href="//cdn.datatables.net/1.10.25/css/jquery.dataTables.min.css">
 </head>
+
 <body>
 
     <div class="dashboard-container">
@@ -28,7 +31,7 @@
             </header>
 
             <section class="tabela-container">
-                <table class="tabela-dados">
+                <table class="tabela-dados minhaTabela">
                     <thead>
                         <tr>
                             <th>ID</th>
@@ -48,17 +51,44 @@
         </main>
     </div>
 
+    <script src="//code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="//cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js"></script>
+
     <script>
+
+        function inicializarDataTable() {
+            $('.minhaTabela').DataTable({
+                "destroy": true,
+                "pageLength": 500,
+                "order": [[0, "desc"]],
+                "language": {
+                    "searchPlaceholder": "Buscar...",
+                    "lengthMenu": "Mostrando _MENU_ registros por página",
+                    "sSearch": "",
+                    "zeroRecords": "Nada encontrado",
+                    "info": "Mostrando página _PAGE_ de _PAGES_",
+                    "infoEmpty": "Nenhum registro disponível",
+                    "infoFiltered": "(filtrado de _MAX_ registros no total)",
+                    "url": "//cdn.datatables.net/plug-ins/1.10.24/i18n/Portuguese-Brasil.json"
+                },
+                "columnDefs": [
+                    { "orderable": false, "targets": "no-sort" }
+                ]
+            });
+        }
+
         async function carregarProfessores() {
             try {
                 const resposta = await fetch('/api/professores');
                 const professores = await resposta.json();
-                
+
                 const corpoTabela = document.getElementById('tabela-professores-corpo');
                 corpoTabela.innerHTML = '';
 
                 if (professores.length === 0) {
                     corpoTabela.innerHTML = `<tr><td colspan="5" style="text-align: center;">Nenhum professor cadastrado.</td></tr>`;
+
+                    inicializarDataTable();
                     return;
                 }
 
@@ -78,9 +108,11 @@
                     corpoTabela.innerHTML += linha;
                 });
 
+                inicializarDataTable();
+
             } catch (erro) {
                 console.error("Erro ao carregar professores:", erro);
-                document.getElementById('tabela-professores-corpo').innerHTML = 
+                document.getElementById('tabela-professores-corpo').innerHTML =
                     `<tr><td colspan="5" style="text-align: center; color: red;">Erro ao carregar dados.</td></tr>`;
             }
         }
@@ -102,8 +134,10 @@
                 }
             }
         }
-
-        carregarProfessores();
-    </script>
+        $(document).ready(function () {
+            carregarProfessores();
+        });        
+    </script>    
 </body>
+
 </html>
