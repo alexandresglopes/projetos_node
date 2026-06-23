@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema Escolar</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.14.0/css/all.css" >
+</head>
+
+<body>
+
+    <div class="dashboard-container">
+        <aside class="sidebar">
+            <h2>Sistema Escolar</h2>
+            <nav>
+                <a href="dashboard.html">🏠 Dashboard</a>
+                <a href="lista-professores.html">👨‍🏫 Controle Professores</a>
+                <a href="lista-alunos.html" class="active">👨‍🎓 Controle Alunos</a>
+                <a href="lista-turmas.html">🏫 Controle Turmas</a>
+                <a href="/logout" class="btn-sair">🚪 Sair do Sistema</a>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <header style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+                <h1>Alunos Cadastrados</h1>
+                <a href="cadastro-aluno.html" class="btn-novo">+ Novo Aluno</a>
+            </header>
+
+            <section class="tabela-container">
+                <table class="tabela-dados">
+                    <thead>
+                        <tr>
+                            <th>Matricula</th>
+                            <th>Nome</th>
+                            <th>Data de Nascimento</th>
+                            <th>E-mail</th>
+                            <th>Turma</th>
+                            <th style="text-align: center;">Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabela-alunos-corpo">
+                        <tr>
+                            <td colspan="5" style="text-align: center;">Carregando alunos...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+        </main>
+    </div>
+
+    <script>
+        async function carregarAlunos() {
+            try {
+                const resposta = await fetch('/api/alunos');
+                const alunos = await resposta.json();
+
+                const corpoTabela = document.getElementById('tabela-alunos-corpo');
+                corpoTabela.innerHTML = '';
+
+                if (alunos.length === 0) {
+                    corpoTabela.innerHTML = `<tr><td colspan="6" style="text-align: center;">Nenhum aluno cadastrado.</td></tr>`;
+                    return;
+                }
+
+                alunos.forEach(aluno => {
+                    const dataFormatada = new Date(aluno.data_nascimento).toLocaleDateString('pt-BR', { timeZone: 'UTC' });
+                    const linha = `
+                        <tr>
+                            <td>${aluno.matricula}</td>
+                            <td>${aluno.nome}</td>
+                            <td>${dataFormatada}</td>
+                            <td>${aluno.email}</td>
+                            <td>${aluno.nome_turma}</td>
+                            <td style="text-align: center;">
+                                <a href="editar-aluno.html?matricula=${aluno.matricula}" class="btn-acao btn-editar"><i class="fas fa-user-edit"></i></a>
+                                <button onclick="deletarAluno(${aluno.matricula})" class="btn-acao btn-excluir"><i class="far fa-trash-alt"></i></button>
+                            </td>
+                        </tr>
+                    `;
+                    corpoTabela.innerHTML += linha;
+                });
+
+            } catch (erro) {
+                console.error("Erro ao carregar alunos:", erro);
+                document.getElementById('tabela-alunos-corpo').innerHTML =
+                    `<tr><td colspan="6" style="text-align: center; color: red;">Erro ao carregar dados.</td></tr>`;
+            }
+        }
+
+        async function deletarAluno(matricula) {
+            if (confirm("Tem certeza que deseja excluir este aluno?")) {
+                try {
+                    const resposta = await fetch(`/api/alunos/${matricula}`, {
+                        method: 'DELETE'
+                    });
+
+                    if (resposta.ok) {
+                        carregarAlunos();
+                    } else {
+                        alert("Erro ao excluir aluno.");
+                    }
+                } catch (erro) {
+                    console.error("Erro ao deletar aluno:", erro);
+                }
+            }
+        }
+
+        carregarAlunos();
+    </script>
+</body>
+
+</html>

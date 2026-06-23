@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema Escolar</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+    <main class="container">
+        <form class="formulario" action="/atualizar-professor" method="POST">
+            <h1>Editar Professor</h1>
+
+            <input type="hidden" id="matricula" name="matricula">
+
+            <label for="nome">Nome Completo</label>
+            <input type="text" id="nome" name="nome" required>
+
+            <label for="email">E-mail</label>
+            <input type="email" id="email" name="email" required>
+
+            <label for="formacao">Formação Acadêmica</label>
+            <input type="text" id="formacao" name="formacao" required>
+
+            <button type="submit">Salvar Alterações</button>
+            <a href="lista-professores.html" style="display: block; text-align: center; margin-top: 15px; color: #1976d2; text-decoration: none; font-weight: bold;">Cancelar</a>
+        </form>
+    </main>
+
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const matricula = urlParams.get('matricula');
+
+        async function carregarDadosProfessor() {
+            try {
+                const resposta = await fetch(`/api/professores/${matricula}`);
+                const professor = await resposta.json();
+
+                document.getElementById('matricula').value = professor.matricula;
+                document.getElementById('nome').value = professor.nome;
+                document.getElementById('email').value = professor.email;
+                document.getElementById('formacao').value = professor.formacao;
+            } catch (erro) {
+                console.error("Erro ao carregar dados do professor:", erro);
+            }
+        }
+
+        if (matricula) {
+            carregarDadosProfessor();
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema Escolar</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+    <main class="container">
+        <div class="form-group">
+            <form class="formulario" action="/cadastrar-professor" method="POST">                
+                <h1>Cadastrar Professores</h1>
+
+                <label for="nome">Nome do professor</label>
+                <input type="text" id="nome" name="nome" required>
+
+                <label for="email">E-mail</label>
+                <input type="email" id="email" name="email" required>
+
+                <label for="formacao">Formação</label>
+                <input type="text" id="formacao" name="formacao" required>
+
+                <button type="submit">Salvar</button>
+                <a href="lista-professores.html" style="display: block; text-align: center; margin-top: 15px; color: #1976d2; text-decoration: none; font-weight: bold;">Voltar para a lista</a>
+            </form>
+        </div>
+    </main>
+
+
+    <script>
+        const parametros = new URLSearchParams(window.location.search);
+
+        if (parametros.get("sucesso") === "true") {
+            alert("Professor cadastrado com sucesso!");
+        }
+    </script>
+</body>
+
+</html>

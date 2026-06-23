@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema Escolar</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.14.0/css/all.css" >
+</head>
+
+<body>
+
+    <div class="dashboard-container">
+        <aside class="sidebar">
+            <h2>Sistema Escolar</h2>
+            <nav>
+                <a href="dashboard.html">🏠 Dashboard</a>
+                <a href="lista-professores.html">👨‍🏫 Controle Professores</a>
+                <a href="lista-alunos.html">👨‍🎓 Controle Alunos</a>
+                <a href="lista-turmas.html" class="active">🏫 Controle Turmas</a>
+                <a href="/logout" class="btn-sair">🚪 Sair do Sistema</a>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <header style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+                <h1>Turmas Cadastradas</h1>
+                <a href="cadastro-turma.html" class="btn-novo">+ Nova Turma</a>
+            </header>
+
+            <section class="tabela-container">
+                <table class="tabela-dados">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Nome do Curso</th>
+                            <th>Ano Letivo</th>
+                            <th>Matrícula do Professor</th>
+                            <th style="text-align: center;">Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabela-turmas-corpo">
+                        <tr>
+                            <td colspan="4" style="text-align: center;">Carregando turmas...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+        </main>
+    </div>
+
+    <script>
+        async function carregarTurmas() {
+            try {
+                const resposta = await fetch('/api/turmas');
+                const turmas = await resposta.json();
+
+                const corpoTabela = document.getElementById('tabela-turmas-corpo');
+                corpoTabela.innerHTML = '';
+
+                if (turmas.length === 0) {
+                    corpoTabela.innerHTML = `<tr><td colspan="5" style="text-align: center;">Nenhuma turma cadastrada.</td></tr>`;
+                    return;
+                }
+
+                turmas.forEach(turma => {
+                    const linha = `
+                        <tr>
+                            <td>${turma.numero}</td>
+                            <td>${turma.nome_curso}</td>
+                            <td>${turma.ano_letivo}</td>
+                            <td>${turma.nome_professor || 'Não atribuído'}</td>
+                            <td style="text-align: center;">
+                                <a href="editar-turma.html?numero=${turma.numero}" class="btn-acao btn-editar"><i class="fas fa-user-edit"></i></a>
+                                <button onclick="deletarTurma(${turma.numero})" class="btn-acao btn-excluir"><i class="far fa-trash-alt"></i></button>
+                            </td>
+                        </tr>
+                    `;
+                    corpoTabela.innerHTML += linha;
+                });
+
+            } catch (erro) {
+                console.error("Erro ao carregar turmas:", erro);
+                document.getElementById('tabela-turmas-corpo').innerHTML =
+                    `<tr><td colspan="5" style="text-align: center; color: red;">Erro ao carregar dados.</td></tr>`;
+            }
+        }
+
+        async function deletarTurma(numero) {
+            if (confirm("Tem certeza que deseja excluir esta turma? Os alunos vinculados a ela perderão o vínculo.")) {
+                try {
+                    const resposta = await fetch(`/api/turmas/${numero}`, {
+                        method: 'DELETE'
+                    });
+
+                    if (resposta.ok) {
+                        carregarTurmas();
+                    } else {
+                        alert("Erro ao excluir turma.");
+                    }
+                } catch (erro) {
+                    console.error("Erro ao deletar turma:", erro);
+                }
+            }
+        }
+
+        carregarTurmas();
+    </script>
+</body>
+
+</html>

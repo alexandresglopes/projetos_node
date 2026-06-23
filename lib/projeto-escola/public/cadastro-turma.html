@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema Escolar</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+    <main class="container">
+        <form class="formulario" action="/cadastrar-turma" method="POST">
+            <h1>Cadastrar Turma</h1>
+
+            <label for="nome_curso">Nome do Curso</label>
+            <input type="text" id="nome_curso" name="nome_curso" required>
+
+            <label for="ano_letivo">Ano Letivo</label>
+            <input type="number" id="ano_letivo" name="ano_letivo" min="2000" max="2100" required>
+
+            <label for="matricula_professor">Professor Responsável</label>
+            <select id="matricula_professor" name="matricula_professor">
+                <option value="">Selecione um professor (Opcional)</option>
+            </select>
+
+            <button type="submit">Salvar</button>
+            <a href="lista-turmas.html" style="display: block; text-align: center; margin-top: 15px; color: #1976d2; text-decoration: none; font-weight: bold;">Voltar para a lista</a>
+        </form>
+    </main>
+
+    <script>
+        async function carregarProfessores() {
+            try {
+                const resposta = await fetch('/api/professores');
+                const professores = await resposta.json();
+                const select = document.getElementById('matricula_professor');
+
+                professores.forEach(prof => {
+                    const option = document.createElement('option');
+                    option.value = prof.matricula;
+                    option.text = prof.nome;
+                    select.appendChild(option);
+                });
+            } catch (erro) {
+                console.error("Erro ao carregar professores para o select:", erro);
+            }
+        }
+
+        carregarProfessores();
+    </script>
+</body>
+</html>

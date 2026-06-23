@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema Escolar</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body>
+
+    <div class="dashboard-container">
+        <aside class="sidebar">
+            <h2>Sistema Escolar</h2>
+            <nav>
+                <a href="dashboard.html" class="active">🏠 Dashboard</a>
+                <a href="lista-professores.html">👨‍🏫 Controle Professores</a>
+                <a href="lista-alunos.html">👨‍🎓 Controle Alunos</a>
+                <a href="lista-turmas.html">🏫 Controle Turmas</a>
+                <a href="/logout" class="btn-sair">🚪 Sair do Sistema</a>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <header>
+                <h1>Painel de Controle</h1>
+            </header>
+
+            <section class="cards-grid">
+                <div class="card">
+                    <h3>Professores</h3>
+                    <p id="total-professores">Carregando...</p>
+                </div>
+                <div class="card">
+                    <h3>Alunos</h3>
+                    <p id="total-alunos">Carregando...</p>
+                </div>
+                <div class="card">
+                    <h3>Turmas</h3>
+                    <p id="total-turmas">Carregando...</p>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script>
+        async function carregarDashboard() {
+            try {
+                const resposta = await fetch('/api/totais-dashboard');
+                const dados = await resposta.json();
+
+                document.getElementById('total-professores').innerText = dados.professores;
+                document.getElementById('total-alunos').innerText = dados.alunos;
+                document.getElementById('total-turmas').innerText = dados.turmas;
+            } catch (erro) {
+                console.error("Erro ao carregar dados do dashboard:", erro);
+            }
+        }
+
+        carregarDashboard();
+    </script>
+</body>
+
+</html>

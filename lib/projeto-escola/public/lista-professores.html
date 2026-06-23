@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema Escolar</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.14.0/css/all.css" >
+</head>
+<body>
+
+    <div class="dashboard-container">
+        <aside class="sidebar">
+            <h2>Sistema Escolar</h2>
+            <nav>
+                <a href="dashboard.html">🏠 Dashboard</a>
+                <a href="lista-professores.html" class="active">👨‍🏫 Controle Professores</a>
+                <a href="lista-alunos.html">👨‍🎓 Controle Alunos</a>
+                <a href="lista-turmas.html">🏫 Controle Turmas</a>
+                <a href="/logout" class="btn-sair">🚪 Sair do Sistema</a>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <header style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+                <h1>Professores Cadastrados</h1>
+                <a href="cadastro-professor.html" class="btn-novo">+ Novo Professor</a>
+            </header>
+
+            <section class="tabela-container">
+                <table class="tabela-dados">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Nome</th>
+                            <th>E-mail</th>
+                            <th>Formação</th>
+                            <th style="text-align: center;">Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabela-professores-corpo">
+                        <tr>
+                            <td colspan="5" style="text-align: center;">Carregando professores...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+        </main>
+    </div>
+
+    <script>
+        async function carregarProfessores() {
+            try {
+                const resposta = await fetch('/api/professores');
+                const professores = await resposta.json();
+                
+                const corpoTabela = document.getElementById('tabela-professores-corpo');
+                corpoTabela.innerHTML = '';
+
+                if (professores.length === 0) {
+                    corpoTabela.innerHTML = `<tr><td colspan="5" style="text-align: center;">Nenhum professor cadastrado.</td></tr>`;
+                    return;
+                }
+
+                professores.forEach(prof => {
+                    const linha = `
+                        <tr>
+                            <td>${prof.matricula}</td>
+                            <td>${prof.nome}</td>
+                            <td>${prof.email}</td>
+                            <td>${prof.formacao}</td>
+                            <td style="text-align: center;">
+                                <a href="editar-professor.html?matricula=${prof.matricula}" class="btn-acao btn-editar"><i class="fas fa-user-edit"></i></a>
+                                <button onclick="deletarProfessor(${prof.matricula})" class="btn-acao btn-excluir"><i class="far fa-trash-alt"></i></button>
+                            </td>
+                        </tr>
+                    `;
+                    corpoTabela.innerHTML += linha;
+                });
+
+            } catch (erro) {
+                console.error("Erro ao carregar professores:", erro);
+                document.getElementById('tabela-professores-corpo').innerHTML = 
+                    `<tr><td colspan="5" style="text-align: center; color: red;">Erro ao carregar dados.</td></tr>`;
+            }
+        }
+
+        async function deletarProfessor(matricula) {
+            if (confirm("Tem certeza que deseja excluir este professor?")) {
+                try {
+                    const resposta = await fetch(`/api/professores/${matricula}`, {
+                        method: 'DELETE'
+                    });
+
+                    if (resposta.ok) {
+                        carregarProfessores();
+                    } else {
+                        alert("Erro ao excluir professor.");
+                    }
+                } catch (erro) {
+                    console.error("Erro ao deletar professor:", erro);
+                }
+            }
+        }
+
+        carregarProfessores();
+    </script>
+</body>
+</html>

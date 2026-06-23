@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema Escolar</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body>
+
+    <main class="container">
+        <form class="formulario" action="/login" method="POST">
+            <h1>Sistema Escolar</h1>
+
+            <div id="erro-mensagem"
+                style="color: #d32f2f; text-align: center; margin-bottom: 15px; font-weight: bold; display: none;">
+                Usuário ou senha inválidos!
+            </div>
+
+            <label for="usuario">Usuário</label>
+            <input type="text" id="usuario" name="usuario" placeholder="admin" required>
+
+            <label for="senha">Senha</label>
+            <input type="password" id="senha" name="senha" placeholder="*****" required>
+
+            <button type="submit">Acessar Sistema</button>
+        </form>
+    </main>
+
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('erro') === '1') {
+            document.getElementById('erro-mensagem').style.display = 'block';
+        }
+    </script>
+</body>
+
+</html>
