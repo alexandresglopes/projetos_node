@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cidadão Seguro</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.14.0/css/all.css">
+    <style>
+        body {
+            background: linear-gradient(135deg, #2c3e50 0%, #0f2027 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            padding: 15px;
+        }
+        .login-container {
+            background: #ffffff;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+        }
+        .login-header-icon {
+            font-size: 50px;
+            color: #34495e;
+            margin-bottom: 15px;
+        }
+        .login-container h1 {
+            color: #2c3e50;
+            margin-bottom: 8px;
+            font-size: 26px;
+            font-weight: 700;
+        }
+        .login-container p {
+            color: #7f8c8d;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+        .erro-mensagem {
+            background-color: #fde8e8;
+            color: #e53e3e;
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            text-align: left;
+            border-left: 4px solid #e53e3e;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="login-container">
+        <div class="login-header-icon">
+            <i class="fas fa-shield-alt"></i>
+        </div>
+        <h1>Cidadão Seguro</h1>
+        <p>Gestão de Ocorrências Municipais</p>
+
+        <div id="erro-alerta" class="erro-mensagem">
+            <i class="fas fa-exclamation-triangle"></i> Usuário ou senha inválidos para a prefeitura.
+        </div>
+
+        <form class="formulario" action="/login" method="POST" style="box-shadow: none; padding: 0; width: 100%; text-align: left;">
+            <label for="usuario">Usuário Funcional</label>
+            <input type="text" id="usuario" name="usuario" placeholder="Ex: seguranca" required>         
+
+            <label for="senha">Senha</label>
+            <div class="campo-senha-container" style="position: relative; width: 100%;">
+                <input type="password" id="senha" name="senha" placeholder="*****"
+                    style="padding-right: 40px; margin-bottom: 18px;" required>
+                <i class="fas fa-eye" id="toggleSenha"
+                    style="position: absolute; right: 15px; top: 13px; cursor: pointer; color: #757575; font-size: 16px;"></i>
+            </div>
+
+            <button type="submit" style="margin-top: 15px; width: 100%; background-color: #2c3e50;">Acessar Painel</button>
+        </form>
+    </div>
+
+    <script>
+        
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('erro') === '1') {
+            document.getElementById('erro-alerta').style.display = 'block';
+        }
+
+        const senhaInput = document.getElementById('senha');
+        const toggleSenhaIcon = document.getElementById('toggleSenha');
+
+        toggleSenhaIcon.addEventListener('click', function () {
+            if (senhaInput.type === 'password') {
+                senhaInput.type = 'text';
+                toggleSenhaIcon.classList.remove('fa-eye');
+                toggleSenhaIcon.classList.add('fa-eye-slash');
+            } else {
+                senhaInput.type = 'password';
+                toggleSenhaIcon.classList.remove('fa-eye-slash');
+                toggleSenhaIcon.classList.add('fa-eye');
+            }
+        });
+    </script>
+</body>
+</html>

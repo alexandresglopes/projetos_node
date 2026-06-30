@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema Comercial</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.14.0/css/all.css">
+    <link rel="stylesheet" href="//cdn.datatables.net/1.10.25/css/jquery.dataTables.min.css">
+</head>
+<body>
+
+    <button class="btn-menu-toggle" id="menuToggle">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <div class="dashboard-container">
+        <aside class="sidebar" id="sidebarMenu">
+            <h2>Sistema Comercial</h2>
+            <nav>
+                <a href="dashboard.html">🏠 Dashboard</a>
+                <a href="lista-clientes.html">👤 Cliente</a>
+                <a href="lista-vendedores.html">💼 Vendedor</a>
+                <a href="lista-produtos.html" class="active">📦 Produto</a>
+                <a href="lista-vendas.html">🛒 Venda</a>
+                <a href="/logout" class="btn-sair">🚪 Sair</a>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <header style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+                <h1>Estoque de Produtos</h1>
+                <a href="cadastro-produto.html" class="btn-novo">+ Novo Produto</a>
+            </header>
+
+            <section class="tabela-container">
+                <table class="tabela-dados minhaTabela">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Produto</th>
+                            <th>Categoria</th>
+                            <th>Preço</th>
+                            <th>Estoque</th>
+                        </tr>
+                    </thead>
+                    <tbody id="corpo-tabela"></tbody>
+                </table>
+            </section>
+        </main>
+    </div>
+
+    <script src="//code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="//cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js"></script>
+    <script>
+        function inicializarDataTable() {
+            $('.minhaTabela').DataTable({
+                "destroy": true,
+                "order": [[0, "desc"]],
+                "language": {
+                    "url": "//cdn.datatables.net/plug-ins/1.10.24/i18n/Portuguese-Brasil.json"
+                }
+            });
+        }
+
+        async function carregarProdutos() {
+            try {
+                const resposta = await fetch('/api/produtos');
+                const produtos = await resposta.json();
+                const corpo = document.getElementById('corpo-tabela');
+                corpo.innerHTML = '';
+
+                produtos.forEach(p => {
+                    corpo.innerHTML += `
+                        <tr>
+                            <td>${p.id_produto}</td>
+                            <td><strong>${p.nome_produto}</strong> <br><small style="color:gray;">${p.descricao}</small></td>
+                            <td>${p.categoria}</td>
+                            <td>R$ ${p.preco.toFixed(2)}</td>
+                            <td>${p.quantidade_estoque} un</td>
+                        </tr>
+                    `;
+                });
+                inicializarDataTable();
+            } catch (erro) {
+                console.error("Erro:", erro);
+            }
+        }
+        carregarProdutos();
+
+        const menuToggle = document.getElementById('menuToggle');
+        const sidebarMenu = document.getElementById('sidebarMenu');
+
+        menuToggle.addEventListener('click', (e) => {
+            sidebarMenu.classList.toggle('ativo');
+            e.stopPropagation();
+        });
+
+        document.addEventListener('click', (e) => {
+            if (!sidebarMenu.contains(e.target) && sidebarMenu.classList.contains('ativo')) {
+                sidebarMenu.classList.remove('ativo');
+            }
+        });
+    </script>
+</body>
+</html>

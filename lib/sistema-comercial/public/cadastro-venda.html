@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema Comercial</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.14.0/css/all.css">
+</head>
+
+<body>
+
+    <div class="dashboard-container">
+        <main class="main-content" style="max-width: 700px; margin: 0 auto;">
+            <header style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+                <h1>Lançar Nova Venda</h1>
+                <a href="lista-vendas.html" class="btn-acao" style="background-color: #757575; color: white;"><i class="fas fa-list"></i> Histórico de Vendas</a>
+            </header>
+
+            <form class="formulario" action="/cadastrar-venda" method="POST" style="width: 100%; box-shadow: 0 4px 8px rgba(0,0,0,0.1); padding: 25px;">
+                
+                <label for="id_cliente">Selecione o Cliente</label>
+                <select id="id_cliente" name="id_cliente" required style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; margin-bottom: 15px; background: white;">
+                    <option value="">Carregando clientes...</option>
+                </select>
+
+                <label for="id_vendedor">Selecione o Vendedor</label>
+                <select id="id_vendedor" name="id_vendedor" required style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; margin-bottom: 15px; background: white;">
+                    <option value="">Carregando vendedores...</option>
+                </select>
+
+                <div style="display: flex; gap: 15px;">
+                    <div style="flex: 2;">
+                        <label for="id_produto">Produto</label>
+                        <select id="id_produto" name="id_produto" required style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; margin-bottom: 15px; background: white;">
+                            <option value="" data-preco="0">Carregando produtos...</option>
+                        </select>
+                    </div>
+                    <div style="flex: 1;">
+                        <label for="quantidade">Quantidade</label>
+                        <input type="number" id="quantidade" name="quantidade" min="1" value="1" required>
+                    </div>
+                </div>
+
+                <div style="display: flex; gap: 15px;">
+                    <div style="flex: 1;">
+                        <label for="data_venda">Data da Venda</label>
+                        <input type="date" id="data_venda" name="data_venda" required>
+                    </div>
+                    <div style="flex: 1;">
+                        <label for="valor_total">Valor Total (R$)</label>
+                        <input type="number" id="valor_total" name="valor_total" step="0.01" readonly style="background-color: #f5f5f5; cursor: not-allowed;">
+                    </div>
+                </div>
+
+                <button type="submit" style="margin-top: 20px; width: 100%;">Finalizar Venda</button>
+            </form>
+        </main>
+    </div>
+
+    <script>
+        document.getElementById('data_venda').valueAsDate = new Date();
+
+        const selectCliente = document.getElementById('id_cliente');
+        const selectVendedor = document.getElementById('id_vendedor');
+        const selectProduto = document.getElementById('id_produto');
+        const inputQuantidade = document.getElementById('quantidade');
+        const inputValorTotal = document.getElementById('valor_total');
+
+        
+        function calcularTotalVenda() {
+            const opcaoSelecionada = selectProduto.options[selectProduto.selectedIndex];
+            const precoUnitario = parseFloat(opcaoSelecionada.getAttribute('data-preco')) || 0;
+            const quantidade = parseInt(inputQuantidade.value) || 0;
+
+            const total = precoUnitario * quantidade;
+            inputValorTotal.value = total.toFixed(2);
+        }
+
+        
+        async function popularFormulario() {
+            try {
+                
+                const resClientes = await fetch('/api/clientes');
+                const clientes = await resClientes.json();
+                selectCliente.innerHTML = '<option value="">-- Escolha um cliente --</option>';
+                clientes.forEach(c => {
+                    selectCliente.innerHTML += `<option value="${c.id_cliente}">${c.nome} (${c.cpf})</option>`;
+                });
+
+                
+                const resVendedores = await fetch('/api/vendedores');
+                const vendedores = await resVendedores.json();
+                selectVendedor.innerHTML = '<option value="">-- Escolha um vendedor --</option>';
+                vendedores.forEach(v => {
+                    selectVendedor.innerHTML += `<option value="${v.id_vendedor}">${v.nome} - Matrícula: ${v.matricula}</option>`;
+                });
+
+                
+                const resProdutos = await fetch('/api/produtos');
+                const produtos = await resProdutos.json();
+                selectProduto.innerHTML = '<option value="" data-preco="0">-- Escolha um produto --</option>';
+                produtos.forEach(p => {
+                    selectProduto.innerHTML += `<option value="${p.id_produto}" data-preco="${p.preco}">${p.nome_produto} (R$ ${p.preco.toFixed(2)})</option>`;
+                });
+
+            } catch (erro) {
+                console.error("Erro ao popular os seletores da venda:", erro);
+            }
+        }
+
+        selectProduto.addEventListener('change', calcularTotalVenda);
+        inputQuantidade.addEventListener('input', calcularTotalVenda);
+
+        
+        popularFormulario();
+    </script>
+</body>
+</html>

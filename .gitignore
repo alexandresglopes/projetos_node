@@ -1,2 +1,8 @@
 lib/projeto-escola/node_modules/
 lib/projeto-escola/.env
+
+lib/cidadao-seguro/node_modules/
+lib/cidadao-seguro/.env
+
+lib/sistema-comercial/node_modules/
+lib/sistema-comercial/.env

@@ -1,0 +1,14 @@
+{
+  "name": "sistema-comercial",
+  "version": "1.0.0",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "dotenv": "^17.4.2",
+    "express": "^4.18.2",
+    "express-session": "^1.19.0",
+    "mysql2": "^3.9.7"
+  }
+}

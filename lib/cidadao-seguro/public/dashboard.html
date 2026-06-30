@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cidadão Seguro</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.14.0/css/all.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .btn-menu-toggle {
+            display: none;
+            position: fixed;
+            top: 15px;
+            left: 15px;
+            background-color: #1f2d3d;
+            color: #ffffff;
+            border: none;
+            padding: 12px 16px;
+            border-radius: 6px;
+            font-size: 18px;
+            cursor: pointer;
+            z-index: 3000;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+
+        .grid-dashboard {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 25px;
+            margin-top: 30px;
+        }
+
+        .card-dash {
+            background: #ffffff;
+            padding: 30px 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            border-top: 5px solid #2c3e50;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .card-dash:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+        }
+
+        .card-dash i {
+            font-size: 38px;
+            color: #2c3e50;
+            margin-bottom: 12px;
+        }
+
+        .card-dash h3 {
+            margin: 0;
+            color: #64748b;
+            font-size: 15px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .contador {
+            font-size: 36px;
+            font-weight: 700;
+            color: #1e293b;
+            margin: 12px 0 18px 0;
+        }
+
+        .card-dash .btn-link {
+            text-decoration: none;
+            background: #2c3e50;
+            color: #ffffff;
+            padding: 8px 15px;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 600;
+            width: 100%;
+            margin-bottom: 6px;
+            text-align: center;
+            display: block;
+            transition: opacity 0.2s;
+        }
+
+        .card-dash .btn-link:hover {
+            opacity: 0.9;
+        }
+
+        .card-dash .btn-lista {
+            background: #64748b;
+            margin-bottom: 0;
+        }
+
+        
+        .graficos-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 25px;
+            margin-top: 40px;
+        }
+
+        .card-grafico {
+            background: #ffffff;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+
+        .card-grafico h3 {
+            color: #2c3e50;
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .grafico-wrapper {
+            position: relative;
+            height: 300px;
+            width: 100%;
+        }
+
+        @media (max-width: 768px) {
+            .btn-menu-toggle {
+                display: block;
+            }
+
+            .graficos-container {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <button class="btn-menu-toggle" id="menuToggle">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <div class="dashboard-container">
+        <aside class="sidebar" id="sidebarMenu">
+            <h2>Cidadão Seguro</h2>
+            <nav>
+                <a href="dashboard.html" class="active"><i class="fas fa-chart-line"></i> Dashboard</a>
+                <a href="lista-cidadaos.html"><i class="fas fa-users"></i> Cidadãos</a>
+                <a href="lista-agentes.html"><i class="fas fa-user-shield"></i> Agentes</a>
+                <a href="lista-bairros.html"><i class="fas fa-map-marked-alt"></i> Bairros</a>
+                <a href="lista-ocorrencias.html"><i class="fas fa-exclamation-triangle"></i> Ocorrências</a>
+                <a href="/logout" class="btn-sair"><i class="fas fa-sign-out-alt"></i> Sair</a>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <header>
+                <h1>Painel de Controle Central</h1>
+                <p style="color: #64748b; margin-top: 5px;">Métricas consolidadas de segurança pública do município.</p>
+            </header>
+
+            <div class="graficos-container">
+                <div class="card-grafico">
+                    <h3><i class="fas fa-chart-pie"></i> Ocorrências por Status</h3>
+                    <div class="grafico-wrapper">
+                        <canvas id="graficoStatus"></canvas>
+                    </div>
+                </div>
+
+                <div class="card-grafico">
+                    <h3><i class="fas fa-chart-bar"></i> Distribuição de Status</h3>
+                    <div class="grafico-wrapper">
+                        <canvas id="graficoBarras"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid-dashboard">
+                <div class="card-dash">
+                    <i class="fas fa-users"></i>
+                    <h3>Cidadãos</h3>
+                    <div class="contador" id="qtd-cidadaos">...</div>
+                    <a href="lista-cidadaos.html" class="btn-link btn-lista">📋 Gerenciar</a>
+                </div>
+
+                <div class="card-dash" style="border-top-color: #16a085;">
+                    <i class="fas fa-user-shield" style="color: #16a085;"></i>
+                    <h3>Agentes de Segurança</h3>
+                    <div class="contador" id="qtd-agentes">...</div>
+                    <a href="lista-agentes.html" class="btn-link btn-lista" style="background-color: #16a085;">📋 Gerenciar</a>
+                </div>
+
+                <div class="card-dash" style="border-top-color: #d35400;">
+                    <i class="fas fa-map-marked-alt" style="color: #d35400;"></i>
+                    <h3>Bairros Mapeados</h3>
+                    <div class="contador" id="qtd-bairros">...</div>
+                    <a href="lista-bairros.html" class="btn-link btn-lista" style="background-color: #d35400;">📋 Gerenciar</a>
+                </div>
+
+                <div class="card-dash" style="border-top-color: #c0392b;">
+                    <i class="fas fa-exclamation-triangle" style="color: #c0392b;"></i>
+                    <h3>Ocorrências Totais</h3>
+                    <div class="contador" id="qtd-ocorrencias">...</div>
+                    <a href="lista-ocorrencias.html" class="btn-link btn-lista" style="background-color: #c0392b;">📋 Gerenciar</a>
+                </div>
+            </div>            
+            
+        </main>
+    </div>
+
+    <script>
+        
+        async function carregarIndicadores() {
+            try {
+                const resposta = await fetch('/api/dashboard-totais');
+                const totais = await resposta.json();
+
+                document.getElementById('qtd-cidadaos').innerText = totais.cidadaos;
+                document.getElementById('qtd-agentes').innerText = totais.agentes;
+                document.getElementById('qtd-bairros').innerText = totais.bairros;
+                document.getElementById('qtd-ocorrencias').innerText = totais.ocorrencias;
+            } catch (erro) {
+                console.error("Erro ao carregar contadores do dashboard:", erro);
+            }
+        }
+
+        
+        async function carregarGraficos() {
+            try {
+                const resposta = await fetch('/api/ocorrencias-por-status');
+                const dados = await resposta.json();
+
+                const labels = ['Aberta', 'Em atendimento', 'Encerrada'];
+                const valores = [
+                    dados['Aberta'] || 0,
+                    dados['Em atendimento'] || 0,
+                    dados['Encerrada'] || 0
+                ];
+
+                
+                const cores = [
+                    'rgba(231, 76, 60, 0.8)',   
+                    'rgba(52, 152, 219, 0.8)',  
+                    'rgba(46, 204, 113, 0.8)'   
+                ];
+
+                const coresBorda = [
+                    'rgba(231, 76, 60, 1)',
+                    'rgba(52, 152, 219, 1)',
+                    'rgba(46, 204, 113, 1)'
+                ];
+
+               
+                const ctxPizza = document.getElementById('graficoStatus').getContext('2d');
+                new Chart(ctxPizza, {
+                    type: 'doughnut',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            data: valores,
+                            backgroundColor: cores,
+                            borderColor: coresBorda,
+                            borderWidth: 2
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'bottom',
+                                labels: {
+                                    padding: 20,
+                                    font: {
+                                        size: 14
+                                    }
+                                }
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        const label = context.label || '';
+                                        const value = context.parsed || 0;
+                                        const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                        const percentage = total > 0 ? ((value / total) * 100).toFixed(1) : 0;
+                                        return `${label}: ${value} (${percentage}%)`;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+
+               
+                const ctxBarras = document.getElementById('graficoBarras').getContext('2d');
+                new Chart(ctxBarras, {
+                    type: 'bar',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: 'Quantidade de Ocorrências',
+                            data: valores,
+                            backgroundColor: cores,
+                            borderColor: coresBorda,
+                            borderWidth: 2
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                ticks: {
+                                    stepSize: 1,
+                                    font: {
+                                        size: 12
+                                    }
+                                }
+                            },
+                            x: {
+                                ticks: {
+                                    font: {
+                                        size: 12
+                                    }
+                                }
+                            }
+                        },
+                        plugins: {
+                            legend: {
+                                display: false
+                            }
+                        }
+                    }
+                });
+
+            } catch (erro) {
+                console.error("Erro ao carregar gráficos:", erro);
+            }
+        }
+
+        
+        const menuToggle = document.getElementById('menuToggle');
+        const sidebarMenu = document.getElementById('sidebarMenu');
+
+        menuToggle.addEventListener('click', (e) => {
+            sidebarMenu.classList.toggle('ativo');
+            e.stopPropagation();
+        });
+
+        document.addEventListener('click', (e) => {
+            if (!sidebarMenu.contains(e.target) && sidebarMenu.classList.contains('ativo')) {
+                sidebarMenu.classList.remove('ativo');
+            }
+        });
+
+        
+        carregarIndicadores();
+        carregarGraficos();
+    </script>
+</body>
+</html>

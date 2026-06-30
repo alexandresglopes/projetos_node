@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema Comercial</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.14.0/css/all.css">
+</head>
+
+<body>
+
+    <div class="dashboard-container">
+        <main class="main-content" style="max-width: 700px; margin: 0 auto;">
+            <header style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+                <h1>Novo Produto</h1>
+                <a href="lista-produtos.html" class="btn-acao" style="background-color: #757575; color: white;"><i
+                        class="fas fa-list"></i> Ver Produtos</a>
+            </header>
+
+            <form class="formulario" action="/cadastrar-produto" method="POST"
+                style="width: 100%; box-shadow: 0 4px 8px rgba(0,0,0,0.1); padding: 25px;">
+                <label for="nome_produto">Nome do Produto</label>
+                <input type="text" id="nome_produto" name="nome_produto" placeholder="Ex: Monitor LED 24'" required>
+
+                <label for="descricao">Descrição</label>
+                <textarea id="descricao" name="descricao" placeholder="Escreva detalhes sobre o produto..."
+                    style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; font-family: inherit; margin-bottom: 15px; height: 80px; resize: vertical;"></textarea>
+
+                <div style="display: flex; gap: 15px;">
+                    <div style="flex: 1;">
+                        <label for="preco">Preço de Venda (R$)</label>
+                        <input type="text" id="preco" name="preco" placeholder="Ex: 99.90"
+                            required>
+                    </div>
+                    <div style="flex: 1;">
+                        <label for="quantidade_estoque">Quantidade em Estoque</label>
+                        <input type="number" id="quantidade_estoque" name="quantidade_estoque" min="0"
+                            placeholder="Ex: 50" required>
+                    </div>
+                    <div style="flex: 1;">
+                        <label for="categoria">Categoria</label>
+                        <input type="text" id="categoria" name="categoria" placeholder="Ex: Informática" required>
+                    </div>
+                </div>
+
+                <button type="submit" style="margin-top: 20px; width: 100%;">Salvar Produto</button>
+            </form>
+        </main>
+    </div>
+
+    <script src="/controllers/script.js"></script>
+
+    <script>
+        window.addEventListener('DOMContentLoaded', () => {
+            const inputPreco = document.getElementById('preco');
+
+            if (inputPreco) {
+                inputPreco.addEventListener('input', function () {
+                    mascaraMoeda(this);
+                });
+            }
+
+        });
+    </script>
+
+</body>
+
+</html>

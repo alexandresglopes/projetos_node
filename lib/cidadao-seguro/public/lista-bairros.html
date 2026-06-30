@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cidadão Seguro</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.14.0/css/all.css">
+    <link rel="stylesheet" href="//cdn.datatables.net/1.10.25/css/jquery.dataTables.min.css">
+    <style>
+        .btn-menu-toggle {
+            position: fixed;
+            top: 15px;
+            left: 15px;
+            background-color: #1f2d3d;
+            color: #ffffff;
+            border: none;
+            padding: 12px 16px;
+            border-radius: 6px;
+            font-size: 18px;
+            cursor: pointer;
+            z-index: 3000;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            display: none;
+        }
+        @media (max-width: 768px) {
+            .btn-menu-toggle { display: block; }
+        }
+    </style>
+</head>
+<body>
+
+    <button class="btn-menu-toggle" id="menuToggle">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <div class="dashboard-container">
+        <aside class="sidebar" id="sidebarMenu">
+            <h2>Cidadão Seguro</h2>
+            <nav>
+                <a href="dashboard.html"><i class="fas fa-chart-line"></i> Dashboard</a>
+                <a href="lista-cidadaos.html"><i class="fas fa-users"></i> Cidadãos</a>
+                <a href="lista-agentes.html"><i class="fas fa-user-shield"></i> Agentes</a>
+                <a href="lista-bairros.html" class="active"><i class="fas fa-map-marked-alt"></i> Bairros</a>
+                <a href="lista-ocorrencias.html"><i class="fas fa-exclamation-triangle"></i> Ocorrências</a>
+                <a href="/logout" class="btn-sair"><i class="fas fa-sign-out-alt"></i> Sair</a>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <header style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px;">
+                <div>
+                    <h1>Bairros Mapeados</h1>
+                    <p style="color: #64748b; margin-top: 5px;">Mapeamento de regiões, zonas urbanas e densidade demográfica.</p>
+                </div>
+                <button class="btn-novo" onclick="abrirModalCadastro()"><i class="fas fa-plus"></i> Novo Bairro</button>
+            </header>
+
+            <section class="tabela-container">
+                <table class="tabela-dados minhaTabela">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Nome do Bairro</th>
+                            <th>Zona</th>
+                            <th>População Estimada</th>
+                            <th>Observações</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="corpo-tabela"></tbody>
+                </table>
+            </section>
+        </main>
+    </div>
+
+    <div id="modalBairro" class="modal">
+        <div class="modal-content">
+            <span class="fechar-modal" onclick="fecharModal()">&times;</span>
+            <h2 id="modal-titulo">Cadastrar Novo Bairro</h2>
+            
+            <form id="formBairro" class="formulario" style="box-shadow: none; padding: 10px 0 0 0; margin-top: 10px;">
+                <input type="hidden" id="id_bairro" name="id_bairro">
+
+                <label for="nome_bairro">Nome do Bairro</label>
+                <input type="text" id="nome_bairro" name="nome_bairro" placeholder="Ex: Centro" required>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="zona">Zona Urbana</label>
+                        <select id="zona" name="zona" required>
+                            <option value="">-- Selecione --</option>
+                            <option value="Norte">Zona Norte</option>
+                            <option value="Sul">Zona Sul</option>
+                            <option value="Leste">Zona Leste</option>
+                            <option value="Oeste">Zona Oeste</option>
+                            <option value="Central">Zona Central</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="populacao_estimada">População Estimada</label>
+                        <input type="number" id="populacao_estimada" name="populacao_estimada" min="0" placeholder="Ex: 15000" required>
+                    </div>
+                </div>
+
+                <label for="observacoes">Observações / Notas Geográficas</label>
+                <textarea id="observacoes" name="observacoes" placeholder="Área comercial, ponto de atenção técnica, etc." style="width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 14px; height: 80px; resize: vertical; margin-bottom: 20px;"></textarea>
+
+                <button type="submit" style="width: 100%; margin-top: 10px;">Salvar Bairro</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="//code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="//cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js"></script>
+    <script src="/controllers/script.js"></script>
+
+    <script>
+        
+        const menuToggle = document.getElementById('menuToggle');
+        const sidebarMenu = document.getElementById('sidebarMenu');
+        menuToggle.addEventListener('click', (e) => {
+            sidebarMenu.classList.toggle('ativo');
+            e.stopPropagation();
+        });
+        document.addEventListener('click', (e) => {
+            if (!sidebarMenu.contains(e.target) && sidebarMenu.classList.contains('ativo')) {
+                sidebarMenu.classList.remove('ativo');
+            }
+        });
+
+        
+        async function carregarBairros() {
+            try {
+                const resposta = await fetch('/api/bairros');
+                const bairros = await resposta.json();
+                
+                let tabela;
+                
+                
+                if ($.fn.DataTable.isDataTable('.minhaTabela')) {
+                    tabela = $('.minhaTabela').DataTable();
+                    tabela.clear();
+                } else {
+                    
+                    tabela = $('.minhaTabela').DataTable({
+                        "order": [[0, "desc"]],
+                        "language": {
+                            "url": "//cdn.datatables.net/plug-ins/1.10.24/i18n/Portuguese-Brasil.json"
+                        }
+                    });
+                }
+
+                
+                bairros.forEach(b => {
+                    tabela.row.add([
+                        b.id_bairro,
+                        `<strong>${b.nome_bairro}</strong>`,
+                        b.zona,
+                        `${Number(b.populacao_estimada).toLocaleString('pt-BR')} hab`,
+                        b.observacoes || '-',
+                        `<button class="btn-tabela btn-editar" onclick="editarBairro(${b.id_bairro})"><i class="fas fa-edit"></i></button>
+                         <button class="btn-tabela btn-deletar" onclick="deletarBairro(${b.id_bairro})"><i class="fas fa-trash"></i></button>`
+                    ]);
+                });
+
+                
+                tabela.draw();
+                
+            } catch (erro) {
+                console.error("Erro ao carregar bairros:", erro);
+            }
+        }
+
+        const modal = document.getElementById('modalBairro');
+
+        function abrirModalCadastro() {
+            document.getElementById('formBairro').reset();
+            document.getElementById('id_bairro').value = '';
+            document.getElementById('modal-titulo').innerText = 'Cadastrar Novo Bairro';
+            modal.style.display = 'block';
+        }
+
+        function fecharModal() {
+            modal.style.display = 'none';
+        }
+
+        async function editarBairro(id) {
+            try {
+                const resposta = await fetch(`/api/bairros/${id}`);
+                const b = await resposta.json();
+                if (!b) return;
+
+                document.getElementById('id_bairro').value = b.id_bairro;
+                document.getElementById('nome_bairro').value = b.nome_bairro;
+                document.getElementById('zona').value = b.zona;
+                document.getElementById('populacao_estimada').value = b.populacao_estimada;
+                document.getElementById('observacoes').value = b.observacoes || '';
+
+                document.getElementById('modal-titulo').innerText = 'Editar Bairro';
+                modal.style.display = 'block';
+            } catch (erro) {
+                console.error("Erro ao carregar dados do bairro:", erro);
+            }
+        }
+
+        document.getElementById('formBairro').addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const id = document.getElementById('id_bairro').value;
+            const dados = {
+                id_bairro: id,
+                nome_bairro: document.getElementById('nome_bairro').value,
+                zona: document.getElementById('zona').value,
+                populacao_estimada: document.getElementById('populacao_estimada').value,
+                observacoes: document.getElementById('observacoes').value
+            };
+
+            const url = id ? '/api/bairros/atualizar' : '/api/bairros';
+
+            try {
+                const resposta = await fetch(url, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(dados)
+                });
+
+                if (resposta.ok) {
+                    fecharModal();
+                    exibirSucesso("Salvo!", "Os dados do bairro foram registrados corretamente.");
+                    carregarBairros();
+                } else {
+                    exibirErro("Erro ao salvar", "Verifique as informações preenchidas e tente novamente.");
+                }
+            } catch (erro) {
+                console.error("Erro na requisição:", erro);
+                exibirErro("Falha de Conexão", "O servidor não respondeu à solicitação.");
+            }
+        });
+
+        async function deletarBairro(id) {
+            if (confirm("Deseja realmente excluir este bairro?")) {
+                try {
+                    const resposta = await fetch(`/api/bairros/${id}`, { method: 'DELETE' });
+                    if (resposta.ok) {
+                        exibirSucesso("Excluído!", "O registro foi removido com sucesso.");
+                        carregarBairros();
+                    } else {
+                        exibirErro("Não permitido", "Este bairro não pode ser removido porque existem ocorrências vinculadas a esta região.");
+                    }
+                } catch (erro) {
+                    console.error("Erro ao deletar bairro:", erro);
+                    exibirErro("Erro de comunicação", "Não foi possível enviar o comando de exclusão.");
+                }
+            }
+        }
+
+        carregarBairros();
+    </script>
+</body>
+</html>

@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cidadão Seguro</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.14.0/css/all.css">
+    <link rel="stylesheet" href="//cdn.datatables.net/1.10.25/css/jquery.dataTables.min.css">
+    <style>
+        .btn-menu-toggle {
+            position: fixed;
+            top: 15px;
+            left: 15px;
+            background-color: #1f2d3d;
+            color: #ffffff;
+            border: none;
+            padding: 12px 16px;
+            border-radius: 6px;
+            font-size: 18px;
+            cursor: pointer;
+            z-index: 3000;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            display: none;
+        }
+        
+        .badge {
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: bold;
+            color: #fff;
+            display: inline-block;
+        }
+        .badge-aberta { background-color: #e74c3c; }
+        .badge-atendimento { background-color: #3498db; }
+        .badge-encerrada { background-color: #2ecc71; }
+
+        @media (max-width: 768px) {
+            .btn-menu-toggle { display: block; }
+        }
+    </style>
+</head>
+<body>
+
+    <button class="btn-menu-toggle" id="menuToggle">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <div class="dashboard-container">
+        
+        <aside class="sidebar" id="sidebarMenu">
+            <h2>Cidadão Seguro</h2>
+            <nav>
+                <a href="dashboard.html"><i class="fas fa-chart-line"></i> Dashboard</a>
+                <a href="lista-cidadaos.html"><i class="fas fa-users"></i> Cidadãos</a>
+                <a href="lista-agentes.html"><i class="fas fa-user-shield"></i> Agentes</a>
+                <a href="lista-bairros.html"><i class="fas fa-map-marked-alt"></i> Bairros</a>
+                <a href="lista-ocorrencias.html" class="active"><i class="fas fa-exclamation-triangle"></i> Ocorrências</a>
+                <a href="/logout" class="btn-sair"><i class="fas fa-sign-out-alt"></i> Sair</a>
+            </nav>
+        </aside>
+
+        
+        <main class="main-content">
+            <header style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px;">
+                <div>
+                    <h1>Registro de Ocorrências</h1>
+                    <p style="color: #64748b; margin-top: 5px;">Central de atendimento, triagem e despacho de incidentes municipais.</p>
+                </div>
+                <button class="btn-novo" onclick="abrirModalCadastro()"><i class="fas fa-plus"></i> Registrar Ocorrência</button>
+            </header>
+
+            
+            <section class="tabela-container">
+                <table class="tabela-dados minhaTabela">
+                    <thead>
+                        <tr>
+                            <th>Protocolo</th>
+                            <th>Tipo</th>
+                            <th>Cidadão Solicitante</th>
+                            <th>Agente Responsável</th>
+                            <th>Bairro</th>
+                            <th>Data/Hora</th>
+                            <th>Status</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="corpo-tabela"></tbody>
+                </table>
+            </section>
+        </main>
+    </div>
+
+    
+    <div id="modalOcorrencia" class="modal">
+        <div class="modal-content" style="max-width: 650px;">
+            <span class="fechar-modal" onclick="fecharModal()">&times;</span>
+            <h2 id="modal-titulo">Registrar Nova Ocorrência</h2>
+            
+            <form id="formOcorrencia" class="formulario" style="box-shadow: none; padding: 10px 0 0 0; margin-top: 10px;">
+                <input type="hidden" id="id_ocorrencia" name="id_ocorrencia">
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="id_cidadao">Cidadão Solicitante</label>
+                        <select id="id_cidadao" name="id_cidadao" required>
+                            <option value="">Carregando cidadãos...</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="id_agente">Agente Responsável</label>
+                        <select id="id_agente" name="id_agente" required>
+                            <option value="">Carregando agentes...</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="id_bairro">Bairro do Incidente</label>
+                        <select id="id_bairro" name="id_bairro" required>
+                            <option value="">Carregando bairros...</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="tipo_ocorrencia">Tipo de Ocorrência</label>
+                        <select id="tipo_ocorrencia" name="tipo_ocorrencia" required>
+                            <option value="">-- Selecione --</option>
+                            <option value="Roubo / Furto">Roubo / Furto</option>
+                            <option value="Vandalismo">Vandalismo</option>
+                            <option value="Perturbação do Sossego">Perturbação do Sossego</option>
+                            <option value="Incêndio">Incêndio</option>
+                            <option value="Acidente de Trânsito">Acidente de Trânsito</option>
+                            <option value="Outros">Outros / Notas Técnicas</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="data_hora">Data & Hora do Registro</label>
+                        <input type="datetime-local" id="data_hora" name="data_hora" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="status">Status do Atendimento</label>
+                        <select id="status" name="status" required>
+                            <option value="Aberta">Aberta</option>
+                            <option value="Em atendimento">Em atendimento</option>
+                            <option value="Encerrada">Encerrada</option>
+                        </select>
+                    </div>
+                </div>
+
+                <label for="descricao">Descrição Detalhada do Fato</label>
+                <textarea id="descricao" name="descricao" placeholder="Relato claro e objetivo sobre o incidente reportado pelo cidadão..." style="width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 14px; height: 90px; resize: vertical; margin-bottom: 20px;" required></textarea>
+
+                <button type="submit" style="width: 100%; margin-top: 10px;">Salvar Ocorrência</button>
+            </form>
+        </div>
+    </div>
+
+    
+    <script src="//code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="//cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js"></script>
+    <script src="/controllers/script.js"></script>
+
+    <script>
+        
+        const menuToggle = document.getElementById('menuToggle');
+        const sidebarMenu = document.getElementById('sidebarMenu');
+        menuToggle.addEventListener('click', (e) => {
+            sidebarMenu.classList.toggle('ativo');
+            e.stopPropagation();
+        });
+        document.addEventListener('click', (e) => {
+            if (!sidebarMenu.contains(e.target) && sidebarMenu.classList.contains('ativo')) {
+                sidebarMenu.classList.remove('ativo');
+            }
+        });
+
+        
+        async function popularSeletores() {
+            try {
+                
+                const resCid = await fetch('/api/cidadaos');
+                const cidadaos = await resCid.json();
+                const selCid = document.getElementById('id_cidadao');
+                selCid.innerHTML = '<option value="">-- Escolha o Cidadão --</option>';
+                cidadaos.forEach(c => selCid.innerHTML += `<option value="${c.id_cidadao}">${c.nome} (CPF: ${c.cpf})</option>`);
+
+                
+                const resAge = await fetch('/api/agentes');
+                const agentes = await resAge.json();
+                const selAge = document.getElementById('id_agente');
+                selAge.innerHTML = '<option value="">-- Escolha o Agente --</option>';
+                agentes.forEach(a => selAge.innerHTML += `<option value="${a.id_agente}">${a.nome} (${a.cargo})</option>`);
+
+                
+                const resBai = await fetch('/api/bairros');
+                const bairros = await resBai.json();
+                const selBai = document.getElementById('id_bairro');
+                selBai.innerHTML = '<option value="">-- Escolha o Bairro --</option>';
+                bairros.forEach(b => selBai.innerHTML += `<option value="${b.id_bairro}">${b.nome_bairro} (${b.zona})</option>`);
+
+            } catch (erro) {
+                console.error("Erro ao popular seletores relacionais:", erro);
+            }
+        }
+
+        
+        async function carregarOcorrencias() {
+            try {
+                const resposta = await fetch('/api/ocorrencias');
+                const ocorrencias = await resposta.json();
+                
+                let tabela;
+                
+                
+                if ($.fn.DataTable.isDataTable('.minhaTabela')) {
+                    tabela = $('.minhaTabela').DataTable();
+                    tabela.clear();
+                } else {
+                    
+                    tabela = $('.minhaTabela').DataTable({
+                        "order": [[0, "desc"]],
+                        "language": {
+                            "url": "//cdn.datatables.net/plug-ins/1.10.24/i18n/Portuguese-Brasil.json"
+                        }
+                    });
+                }
+
+                
+                ocorrencias.forEach(o => {
+                    
+                    let classeBadge = 'badge-aberta';
+                    if (o.status === 'Em atendimento') classeBadge = 'badge-atendimento';
+                    if (o.status === 'Encerrada') classeBadge = 'badge-encerrada';
+
+                    
+                    const dataObj = new Date(o.data_hora);
+                    const dataFormatada = dataObj.toLocaleDateString('pt-BR') + ' ' + dataObj.toLocaleTimeString('pt-BR', {hour: '2-digit', minute:'2-digit'});
+
+                    tabela.row.add([
+                        `<code>#${o.id_ocorrencia}</code>`,
+                        `<strong>${o.tipo_ocorrencia}</strong>`,
+                        o.nome_cidadao,
+                        o.nome_agente,
+                        o.nome_bairro,
+                        dataFormatada,
+                        `<span class="badge ${classeBadge}">${o.status}</span>`,
+                        `<button class="btn-tabela btn-editar" onclick="editarOcorrencia(${o.id_ocorrencia})"><i class="fas fa-edit"></i></button>
+                         <button class="btn-tabela btn-deletar" onclick="deletarOcorrencia(${o.id_ocorrencia})"><i class="fas fa-trash"></i></button>`
+                    ]);
+                });
+
+                
+                tabela.draw();
+                
+            } catch (erro) {
+                console.error("Erro ao carregar histórico de ocorrências:", erro);
+            }
+        }
+
+        const modal = document.getElementById('modalOcorrencia');
+
+        function abrirModalCadastro() {
+            document.getElementById('formOcorrencia').reset();
+            document.getElementById('id_ocorrencia').value = '';
+            document.getElementById('status').value = 'Aberta';
+            document.getElementById('modal-titulo').innerText = 'Registrar Nova Ocorrência';
+            
+            
+            const agora = new Date();
+            agora.setMinutes(agora.getMinutes() - agora.getTimezoneOffset());
+            document.getElementById('data_hora').value = agora.toISOString().slice(0,16);
+
+            modal.style.display = 'block';
+        }
+
+        function fecharModal() {
+            modal.style.display = 'none';
+        }
+
+        
+        async function editarOcorrencia(id) {
+            try {
+                const resposta = await fetch(`/api/ocorrencias/${id}`);
+                const o = await resposta.json();
+                if (!o) return;
+
+                document.getElementById('id_ocorrencia').value = o.id_ocorrencia;
+                document.getElementById('id_cidadao').value = o.id_cidadao;
+                document.getElementById('id_agente').value = o.id_agente;
+                document.getElementById('id_bairro').value = o.id_bairro;
+                document.getElementById('tipo_ocorrencia').value = o.tipo_ocorrencia;
+                document.getElementById('status').value = o.status;
+                document.getElementById('descricao').value = o.descricao;
+
+                if (o.data_hora) {
+                    const dataObj = new Date(o.data_hora);
+                    dataObj.setMinutes(dataObj.getMinutes() - dataObj.getTimezoneOffset());
+                    document.getElementById('data_hora').value = dataObj.toISOString().slice(0,16);
+                }
+
+                document.getElementById('modal-titulo').innerText = 'Atualizar Ocorrência';
+                modal.style.display = 'block';
+            } catch (erro) {
+                console.error("Erro ao buscar dados da ocorrência:", erro);
+            }
+        }
+
+        
+        document.getElementById('formOcorrencia').addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const id = document.getElementById('id_ocorrencia').value;
+            const dados = {
+                id_ocorrencia: id,
+                id_cidadao: document.getElementById('id_cidadao').value,
+                id_agente: document.getElementById('id_agente').value,
+                id_bairro: document.getElementById('id_bairro').value,
+                tipo_ocorrencia: document.getElementById('tipo_ocorrencia').value,
+                data_hora: document.getElementById('data_hora').value,
+                status: document.getElementById('status').value,
+                descricao: document.getElementById('descricao').value
+            };
+
+            const url = id ? '/api/ocorrencias/atualizar' : '/api/ocorrencias';
+
+            try {
+                const resposta = await fetch(url, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(dados)
+                });
+
+                if (resposta.ok) {
+                    fecharModal();
+                    exibirSucesso("Salvo!", "O boletim de ocorrência foi registrado corretamente.");
+                    carregarOcorrencias();
+                } else {
+                    exibirErro("Erro ao salvar", "Verifique as informações preenchidas e tente novamente.");
+                }
+            } catch (erro) {
+                console.error("Erro ao submeter ocorrência:", erro);
+                exibirErro("Falha de Conexão", "O servidor não respondeu à solicitação.");
+            }
+        });
+
+        
+        async function deletarOcorrencia(id) {
+            if (confirm("Deseja realmente arquivar/excluir de forma permanente esta ocorrência?")) {
+                try {
+                    const resposta = await fetch(`/api/ocorrencias/${id}`, { method: 'DELETE' });
+                    if (resposta.ok) {
+                        exibirSucesso("Excluído!", "O registro foi removido com sucesso.");
+                        carregarOcorrencias();
+                    } else {
+                        exibirErro("Erro técnico", "Não foi possível remover a ocorrência.");
+                    }
+                } catch (erro) {
+                    console.error("Erro ao remover:", erro);
+                    exibirErro("Erro de comunicação", "Não foi possível enviar o comando de exclusão.");
+                }
+            }
+        }
+
+        
+        async function inicializarTela() {
+            await popularSeletores();
+            await carregarOcorrencias();
+        }
+
+        inicializarTela();
+    </script>
+</body>
+</html>

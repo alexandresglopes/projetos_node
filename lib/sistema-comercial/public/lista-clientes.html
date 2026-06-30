@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema Comercial</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.14.0/css/all.css">
+    <link rel="stylesheet" href="//cdn.datatables.net/1.10.25/css/jquery.dataTables.min.css">
+</head>
+<body>
+
+    <button class="btn-menu-toggle" id="menuToggle">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <div class="dashboard-container">
+        <aside class="sidebar" id="sidebarMenu">
+            <h2>Sistema Comercial</h2>
+            <nav>
+                <a href="dashboard.html">🏠 Dashboard</a>
+                <a href="lista-clientes.html" class="active">👤 Cliente</a>
+                <a href="lista-vendedores.html">💼 Vendedor</a>
+                <a href="lista-produtos.html">📦 Produto</a>
+                <a href="lista-vendas.html">🛒 Venda</a>
+                <a href="/logout" class="btn-sair">🚪 Sair</a>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <header style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+                <h1>Clientes Cadastrados</h1>
+                <a href="cadastro-cliente.html" class="btn-novo">+ Novo Cliente</a>
+            </header>
+
+            <section class="tabela-container">
+                <table class="tabela-dados minhaTabela">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Nome</th>
+                            <th>CPF</th>
+                            <th>E-mail</th>
+                            <th>Telefone</th>
+                            <th>Endereço</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="corpo-tabela"></tbody>
+                </table>
+            </section>
+        </main>
+    </div>
+
+    <script src="//code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="//cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js"></script>
+    <script>
+        function inicializarDataTable() {
+            $('.minhaTabela').DataTable({
+                "destroy": true,
+                "order": [[0, "desc"]],
+                "language": {
+                    "url": "//cdn.datatables.net/plug-ins/1.10.24/i18n/Portuguese-Brasil.json"
+                }
+            });
+        }
+
+        async function carregarClientes() {
+            try {
+                const resposta = await fetch('/api/clientes');
+                const clientes = await resposta.json();
+                const corpo = document.getElementById('corpo-tabela');
+                corpo.innerHTML = '';
+
+                clientes.forEach(c => {
+                    corpo.innerHTML += `
+                        <tr>
+                            <td>${c.id_cliente}</td>
+                            <td><strong>${c.nome}</strong></td>
+                            <td>${c.cpf}</td>
+                            <td>${c.email}</td>
+                            <td>${c.telefone}</td>
+                            <td>${c.endereco}</td>
+                            <td style="text-align: center;">
+                                <a href="editar-professor.html?matricula=${c.id_cliente}" class="btn-acao btn-editar"><i class="fas fa-user-edit"></i></a>                                
+                                <button onclick="deletarCliente(${c.id_cliente})" class="btn-acao btn-excluir"><i class="far fa-trash-alt"></i></button>
+                            </td>
+                        </tr>
+                    `;
+                });
+                inicializarDataTable();
+            } catch (erro) {
+                console.error("Erro:", erro);
+            }
+        }
+
+        async function deletarCliente(id) {
+            if (confirm("Tem certeza que deseja excluir este cliente?")) {
+                try {
+                    const resposta = await fetch(`/api/deletecliente/${id}`, {
+                        method: 'DELETE'
+                    });
+
+                    if (resposta.ok) {
+                        carregarClientes();
+                    } else {
+                        alert("Erro ao excluir cliente.");
+                    }
+                } catch (erro) {
+                    console.error("Erro ao deletar cliente:", erro);
+                }
+            }
+        }
+
+        carregarClientes();
+
+        const menuToggle = document.getElementById('menuToggle');
+        const sidebarMenu = document.getElementById('sidebarMenu');
+
+        menuToggle.addEventListener('click', (e) => {
+            sidebarMenu.classList.toggle('ativo');
+            e.stopPropagation();
+        });
+
+        document.addEventListener('click', (e) => {
+            if (!sidebarMenu.contains(e.target) && sidebarMenu.classList.contains('ativo')) {
+                sidebarMenu.classList.remove('ativo');
+            }
+        });
+    </script>
+</body>
+</html>

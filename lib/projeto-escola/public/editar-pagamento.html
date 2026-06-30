@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema Escolar - Editar Pagamento</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.14.0/css/all.css">
+    <style>        
+        .modal {
+            display: none; 
+            position: fixed; 
+            z-index: 1000; 
+            left: 0;
+            top: 0;
+            width: 100%; 
+            height: 100%; 
+            background-color: rgba(0,0,0,0.5);
+        }
+        .modal-content {
+            background-color: #fff;
+            margin: 15% auto; 
+            padding: 20px;
+            border-radius: 8px;
+            width: 300px;
+            text-align: center;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="dashboard-container">
+        <main class="main-content" style="width: 100%; max-width: 600px; margin: 40px auto; padding: 20px;">
+            
+            <header style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+                <a id="btnVoltar" href="#" class="btn-acao" style="background-color: #757575; color: white; padding: 10px 20px; font-size: 14px; border-radius: 6px;"><i class="fas fa-arrow-left"></i> Voltar</a>
+                <h1 style="margin: 0;">Editar Pagamento</h1>
+            </header>
+
+            <form class="formulario" id="formEditarPagamento" style="width: 100%; box-shadow: 0 4px 8px rgba(0,0,0,0.1); padding: 25px;">
+                
+                <input type="hidden" id="edit_id" name="id">
+                <input type="hidden" id="edit_matricula_professor" name="matricula_professor">
+
+                <label for="horas_trabalhadas">Horas Trabalhadas</label>
+                <input type="number" id="horas_trabalhadas" name="horas_trabalhadas" min="1" required>
+
+                <label for="valor_hora">Valor por Hora (R$)</label>
+                <input type="number" id="valor_hora" name="valor_hora" step="0.01" min="0.01" required>
+
+                <label for="data_pagamento">Data de Pagamento</label>
+                <input type="date" id="data_pagamento" name="data_pagamento" required>
+
+                <label for="salario">Salário Total (R$)</label>
+                <input type="number" id="salario" name="salario" step="0.01" readonly style="background-color: #f5f5f5; cursor: not-allowed;">
+
+                <button type="submit" style="margin-top: 20px; width: 100%;">Salvar Alterações</button>
+            </form>
+        </main>
+    </div>
+
+    <div id="modalSucesso" class="modal">
+        <div class="modal-content">
+            <div style="color: #2e7d32; font-size: 50px; margin-bottom: 10px;">
+                <i class="far fa-check-circle"></i>
+            </div>
+            <h2 style="margin-bottom: 15px;">Atualizado!</h2>
+            <p>O registro de pagamento foi alterado com sucesso.</p>
+            <button id="btnFecharSucesso" class="btn-novo" style="background-color: #2e7d32; margin-top: 15px; width: 100%;">Ok</button>
+        </div>
+    </div>
+
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const idPagamento = urlParams.get('id');
+
+        const form = document.getElementById("formEditarPagamento");
+        const inputHoras = document.getElementById("horas_trabalhadas");
+        const inputValor = document.getElementById("valor_hora");
+        const inputSalario = document.getElementById("salario");
+        const btnVoltar = document.getElementById("btnVoltar");
+
+        function calcularSalario() {
+            const horas = parseFloat(inputHoras.value) || 0;
+            const valor = parseFloat(inputValor.value) || 0;
+            const total = horas * valor;
+            inputSalario.value = total.toFixed(2);
+        }
+
+        inputHoras.addEventListener("input", calcularSalario);
+        inputValor.addEventListener("input", calcularSalario);
+
+        
+        async function carregarPagamento() {
+            try {
+                const resposta = await fetch(`/api/pagamentos/${idPagamento}`);
+                const pg = await resposta.json();
+
+                if (pg) {
+                    document.getElementById("edit_id").value = pg.id;
+                    document.getElementById("edit_matricula_professor").value = pg.matricula_professor;
+                    inputHoras.value = pg.horas_trabalhadas;
+                    inputValor.value = pg.valor_hora;
+                    inputSalario.value = pg.salario;
+
+                    if (pg.data_pagamento) {
+                        const dataFormatoInput = pg.data_pagamento.split('T')[0];
+                        document.getElementById("data_pagamento").value = dataFormatoInput;
+                    }
+
+                    btnVoltar.href = `historico-pagamentos.html?matricula=${pg.matricula_professor}`;
+                }
+            } catch (erro) {
+                console.error("Erro ao carregar dados:", erro);
+            }
+        }
+
+        
+        form.addEventListener("submit", async function (event) {
+            event.preventDefault(); 
+
+            
+            const dadosFormulario = {
+                id: document.getElementById("edit_id").value,
+                matricula_professor: document.getElementById("edit_matricula_professor").value,
+                horas_trabalhadas: inputHoras.value,
+                valor_hora: inputValor.value,
+                data_pagamento: document.getElementById("data_pagamento").value,
+                salario: inputSalario.value
+            };
+
+            try {
+                
+                const resposta = await fetch("/atualizar-pagamento", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/x-www-form-urlencoded"
+                    },
+                    body: new URLSearchParams(dadosFormulario).toString()
+                });
+
+                if (resposta.ok) {
+                    
+                    const modalSucesso = document.getElementById("modalSucesso");
+                    const btnFecharSucesso = document.getElementById("btnFecharSucesso");
+                    
+                    modalSucesso.style.display = "block";
+
+                    
+                    btnFecharSucesso.onclick = function() {
+                        modalSucesso.style.display = "none";
+                    };
+                } else {
+                    alert("Erro ao salvar as alterações no servidor.");
+                }
+            } catch (erro) {
+                console.error("Erro ao atualizar pagamento:", erro);
+                alert("Falha na comunicação com o servidor.");
+            }
+        });
+
+        if (idPagamento) {
+            carregarPagamento();
+        }
+    </script>
+</body>
+
+</html>

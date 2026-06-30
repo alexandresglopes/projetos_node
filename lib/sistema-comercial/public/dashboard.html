@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema Comercial</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.14.0/css/all.css">   
+</head>
+
+<body>
+
+    <button class="btn-menu-toggle" id="menuToggle">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <div class="dashboard-container">
+        <aside class="sidebar" id="sidebarMenu">
+            <h2>Sistema Comercial</h2>
+            <nav>
+                <a href="dashboard.html" class="active">🏠 Dashboard</a>
+                <a href="lista-clientes.html">👤 Cliente</a>
+                <a href="lista-vendedores.html">💼 Vendedor</a>
+                <a href="lista-produtos.html">📦 Produto</a>
+                <a href="lista-vendas.html">🛒 Venda</a>
+                <a href="/logout" class="btn-sair">🚪 Sair</a>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <header>
+                <h1>Painel de Controle Geral</h1>
+                <p style="color: #666; margin-top: 5px;">Métricas em tempo real do sistema comercial.</p>
+            </header>
+
+            <div class="grid-dashboard">
+                <div class="card-dash">
+                    <i class="fas fa-users"></i>
+                    <h3>Clientes</h3>
+                    <div class="contador" id="qtd-clientes">...</div>
+                    <!-- <a href="cadastro-cliente.html" class="btn-link">+ Cadastrar</a>
+                    <a href="lista-clientes.html" class="btn-link btn-lista">📋 Ver Todos</a> -->
+                </div>
+
+                <div class="card-dash" style="border-top-color: #2e7d32;">
+                    <i class="fas fa-user-tie" style="color: #2e7d32;"></i>
+                    <h3>Vendedores</h3>
+                    <div class="contador" id="qtd-vendedores">...</div>
+                    <!-- <a href="cadastro-vendedor.html" class="btn-link" style="background-color: #2e7d32;">+ Cadastrar</a>
+                    <a href="lista-vendedores.html" class="btn-link btn-lista">📋 Ver Todos</a> -->
+                </div>
+
+                <div class="card-dash" style="border-top-color: #ef6c00;">
+                    <i class="fas fa-box" style="color: #ef6c00;"></i>
+                    <h3>Produtos</h3>
+                    <div class="contador" id="qtd-produtos">...</div>
+                    <!-- <a href="cadastro-produto.html" class="btn-link" style="background-color: #ef6c00;">+ Cadastrar</a>
+                    <a href="lista-produtos.html" class="btn-link btn-lista">📋 Ver Todos</a> -->
+                </div>
+
+                <div class="card-dash" style="border-top-color: #c62828;">
+                    <i class="fas fa-shopping-cart" style="color: #c62828;"></i>
+                    <h3>Vendas Realizadas</h3>
+                    <div class="contador" id="qtd-vendas">...</div>
+                    <!-- <a href="cadastro-venda.html" class="btn-link" style="background-color: #c62828;">🛒 Nova Venda</a>
+                    <a href="lista-vendas.html" class="btn-link btn-lista">📋 Histórico</a> -->
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+
+        async function obterMétricas() {
+            try {
+                const resposta = await fetch('/api/dashboard-totais');
+                const totais = await resposta.json();
+
+                document.getElementById('qtd-clientes').innerText = totais.clientes;
+                document.getElementById('qtd-vendedores').innerText = totais.vendedores;
+                document.getElementById('qtd-produtos').innerText = totais.produtos;
+                document.getElementById('qtd-vendas').innerText = totais.vendas;
+            } catch (erro) {
+                console.error("Erro ao carregar contadores do dashboard:", erro);
+            }
+        }
+
+        const menuToggle = document.getElementById('menuToggle');
+        const sidebarMenu = document.getElementById('sidebarMenu');
+
+        menuToggle.addEventListener('click', (e) => {
+            sidebarMenu.classList.toggle('ativo');
+            e.stopPropagation();
+        });
+
+        document.addEventListener('click', (e) => {
+            if (!sidebarMenu.contains(e.target) && sidebarMenu.classList.contains('ativo')) {
+                sidebarMenu.classList.remove('ativo');
+            }
+        });
+
+        obterMétricas();
+    </script>
+</body>
+
+</html>
