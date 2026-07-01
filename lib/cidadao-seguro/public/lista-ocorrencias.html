@@ -187,7 +187,7 @@
                 const cidadaos = await resCid.json();
                 const selCid = document.getElementById('id_cidadao');
                 selCid.innerHTML = '<option value="">-- Escolha o Cidadão --</option>';
-                cidadaos.forEach(c => selCid.innerHTML += `<option value="${c.id_cidadao}">${c.nome} (CPF: ${c.cpf})</option>`);
+                cidadaos.forEach(c => selCid.innerHTML += `<option value="${c.id_cidadao}">${c.nome} (CPF: ${c.cpf})</option>`); 
 
                 
                 const resAge = await fetch('/api/agentes');
